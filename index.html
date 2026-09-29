@@ -96,7 +96,7 @@ section.block { display: grid; gap: 24px; }
 .head { display: grid; gap: 8px; }
 .two { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 900px) { .two { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; display: grid; gap: 16px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; display: grid; gap: 16px; min-width: 0; align-content: start; }
 .plan-wrap { overflow-x: auto; }
 .plan-wrap svg { width: 100%; min-width: 320px; height: auto; display: block; }
 .plan-key { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .8125rem; color: var(--muted); }
@@ -141,15 +141,20 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 @media (min-width: 900px) { .cols3.even { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .list li { line-height: 1.45; }
+.bar.bottom { top: auto; bottom: 12px; left: auto; justify-content: flex-end; }
+.muted-note { color: var(--muted); font-size: .9375rem; max-width: 72ch; }
+.cmp td:first-child { width: 28%; }
+.cmp td { text-align: left !important; white-space: normal !important; }
+.cmp th:last-child { text-align: left; }
 </style>
 </head>
 <body>
 
 <div class="page">
   <header class="top">
-    <p class="eyebrow">Propuesta v2 · cuarto ≈ 315 × 330 cm · techo 244 cm · cama twin</p>
-    <h1>Tu cuarto, con más piso libre y lugar para todos tus zapatos</h1>
-    <p class="lede">Sin litera, pero con la misma idea de fondo: una cama twin de plataforma de madera maciza, firme y silenciosa, con cajones para zapatos debajo. Contra la pared del reloj va un zapatero grande con puertas, y su tapa sirve de mesita. La secadora se queda junto al escritorio, sin nada encima.</p>
+    <p class="eyebrow">Propuesta v4 · cuarto ≈ 315 × 330 cm · armario incluido · cama twin actual</p>
+    <h1>Tu cuarto con el armario trabajando a favor del espacio</h1>
+    <p class="lede">El plan nuevo se queda con tu cama actual y sin extras opcionales. Parte de los zapatos y lo que casi no usas pasan al armario, así que el zapatero del cuarto puede ser de 80 cm en vez de 120. Arriba cambias entre Antes, Plan anterior y Plan nuevo para compararlos.</p>
     <div class="stats" id="stats" aria-live="polite"></div>
   </header>
 
@@ -160,18 +165,39 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
       <div class="bar">
         <div class="seg" role="group" aria-label="Estado del cuarto">
           <button type="button" id="m-a" data-mode="a" aria-pressed="false">Antes</button>
-          <button type="button" id="m-d" data-mode="d" aria-pressed="true">Después</button>
+          <button type="button" id="m-p" data-mode="p" aria-pressed="false">Plan anterior</button>
+          <button type="button" id="m-n" data-mode="n" aria-pressed="true">Plan nuevo</button>
         </div>
         <div class="seg" role="group" aria-label="Cámara">
           <button type="button" id="v-pano" data-view="pano" aria-pressed="true">Panorámica</button>
           <button type="button" id="v-plan" data-view="plan" aria-pressed="false">Planta</button>
+          <button type="button" id="v-closet" data-view="closet" aria-pressed="false">Armario</button>
           <button type="button" id="v-door" data-view="door" aria-pressed="false">Desde la puerta</button>
           <button type="button" id="v-bed" data-view="bed" aria-pressed="false">Desde la cama</button>
         </div>
       </div>
+      <div class="bar bottom">
+        <div class="seg"><button type="button" id="door-t" aria-pressed="false">Abrir armario</button></div>
+      </div>
       <p class="hint" id="hint">Arrastra para girar · rueda o pellizco para zoom</p>
     </div>
     <aside class="legend" id="legend" aria-live="polite"></aside>
+  </section>
+
+  <section class="block">
+    <div class="head">
+      <p class="eyebrow">Comparación</p>
+      <h2>Plan anterior contra plan nuevo</h2>
+    </div>
+    <div class="panel">
+      <div class="table-wrap">
+        <table class="shop cmp" id="cmp">
+          <thead><tr><th></th><th>Plan anterior</th><th>Plan nuevo</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted-note">Si tienes 30 pares o menos, el plan nuevo te da más piso por menos dinero. Si tienes más, el zapatero de 120 cm del plan anterior sigue siendo la mejor opción, aunque te quedes con tu cama actual.</p>
+    </div>
   </section>
 
   <section class="block">
@@ -183,92 +209,56 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
       <div class="panel">
         <div class="seg" role="group" aria-label="Plano: estado" style="justify-self:start">
           <button type="button" data-plan="a" aria-pressed="false">Antes</button>
-          <button type="button" data-plan="d" aria-pressed="true">Después</button>
+          <button type="button" data-plan="p" aria-pressed="false">Anterior</button>
+          <button type="button" data-plan="n" aria-pressed="true">Nuevo</button>
         </div>
-        <div class="plan-wrap"><svg id="plan" viewBox="-44 -40 405 420" role="img" aria-label="Plano del cuarto con medidas"></svg></div>
+        <div class="plan-wrap"><svg id="plan" viewBox="-104 -40 465 420" role="img" aria-label="Plano del cuarto y del armario con medidas"></svg></div>
         <div class="plan-key">
           <span><i style="border:1px dashed var(--muted)"></i>Barrido de puertas (dejar libre)</span>
           <span><i style="background:color-mix(in srgb, var(--bad) 18%, transparent);border:1px dashed var(--bad)"></i>Aire de la secadora (nada encima)</span>
         </div>
       </div>
       <div class="panel zones">
-        <div class="zone"><span class="wall">Pared norte · ventana</span><h3>Escritorio y secadora libre</h3><p>La secadora se queda en su rincón, separada 10 cm de la pared y sin nada encima: ni tablero, ni cortina, ni ropa. La papelera pasa bajo el escritorio. La cortina sube a 235 cm y baja al piso solo del lado del escritorio.</p></div>
-        <div class="zone"><span class="wall">Pared oeste · armario</span><h3>Zapatero grande que también es mesita</h3><p>Zapatero con puertas de 120 × 35 × 100 cm (de 24 a 30 pares), anclado a la pared. Encima van una lámpara cálida y una bandeja para llaves, y arriba el cuadro del atardecer. La puerta del armario abre hacia el centro del cuarto y su barrido queda libre.</p></div>
-        <div class="zone"><span class="wall">Pared sur · entrada</span><h3>TV y entrada limpia</h3><p>La TV sigue frente a la cama, con los cables en una canaleta pintada y un LED detrás. El purificador ocupa el lugar de la zapatera vieja, la diana sube a 173 cm al centro y la katana va sobre la puerta. No queda ropa colgada en la entrada.</p></div>
-        <div class="zone"><span class="wall">Pared este · cama</span><h3>Cama firme y pared sin nada suelto</h3><p>Cama twin de plataforma de madera maciza, con tres cajones para zapatos (unos 18 pares). Va sobre almohadillas de goma, con topes contra la pared y atornillada a ella, para que no se mueva, no rechine ni golpee. Arriba ya no va repisa: las fotos y el certificado van colgados planos a 160 cm, con colgadores de seguridad. El celular va en un organizador que cuelga del costado de la cama.</p></div>
+        <div class="zone"><span class="wall">Dentro del armario</span><h3>Bodega al fondo, uso diario al frente</h3><p>En los 70 cm ciegos van la caja de la TV, parada contra la pared del fondo, y las bolsas al vacío. Al frente quedan la cajonera de tu novia, tu cesto y una cajonera nueva igual para ti. Todos los ganchos son iguales y delgados. En la puerta, por dentro, va un organizador de 12 pares.</p></div>
+        <div class="zone"><span class="wall">Pared oeste · armario</span><h3>Zapatero de 80 cm</h3><p>Zapatero con puertas de 80 × 30 × 100 cm (de 16 a 20 pares), anclado a la pared, con el cuadro del atardecer encima. Queda al lado de la puerta del armario, fuera de su barrido.</p></div>
+        <div class="zone"><span class="wall">Pared norte · ventana</span><h3>Escritorio y secadora libre</h3><p>La secadora queda sin nada encima y a 10 cm de la pared, y la papelera va bajo el escritorio. La cortina sube a 235 cm para que la ventana se vea más grande.</p></div>
+        <div class="zone"><span class="wall">Pared sur y este</span><h3>TV, cama y paredes limpias</h3><p>Los cables de la TV van en una canaleta, el purificador junto a la cómoda y la diana a 173 cm. La cama se queda como está, separada 3 cm de la pared, con topes y almohadillas de goma. Las fotos y el certificado van colgados planos a 160 cm.</p></div>
       </div>
     </div>
   </section>
 
   <section class="block">
     <div class="head">
-      <p class="eyebrow">Tu idea de la litera</p>
-      <h2>Cama arriba o espacio abajo: tres opciones</h2>
-    </div>
-    <div class="cols3 even">
-      <div class="panel">
-        <span class="tag out" style="justify-self:start">Descartada</span>
-        <h3>Cama alta tipo loft (≈ 150 cm)</h3>
-        <ul class="list">
-          <li>Con techo de 244 cm te quedan unos 80 cm entre el colchón y el techo: no alcanzas a sentarte derecho.</li>
-          <li>Arriba se junta el calor, y más con la secadora en el mismo cuarto.</li>
-          <li>Pesa 60 kg o más y se arma con decenas de tornillos. La mudanza sería un problema, que es justo lo que quieres evitar.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <span class="tag buy" style="justify-self:start">Plan B</span>
-        <h3>Cama semi-alta (≈ 110 cm)</h3>
-        <ul class="list">
-          <li>Debajo cabe un zapatero bajo o cajoneras.</li>
-          <li>Tiene buena altura para sentarte en la cama.</li>
-          <li>Pero sigue siendo una estructura grande que tapa la pared y hace ver el cuarto más chico.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <span class="tag keep" style="justify-self:start">Elegida</span>
-        <h3>Plataforma de madera con cajones</h3>
-        <ul class="list">
-          <li>Tres cajones integrados guardan unos 18 pares sin ocupar piso.</li>
-          <li>Todo el peso se apoya en la base completa, no en patas delgadas: es la opción más firme y la que menos ruido hace.</li>
-          <li>Para mudarte se desarma en unos 6 paneles. Pesa más que una base de metal, pero se mueve entre dos personas en una tarde.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="head">
-      <p class="eyebrow">Inventario</p>
+      <p class="eyebrow">Inventario del plan nuevo</p>
       <h2>Qué sale, qué se queda y qué comprar</h2>
     </div>
     <div class="cols3">
       <div class="panel">
-        <h3>Sale del cuarto</h3>
+        <h3>Sale</h3>
         <ul class="list">
-          <li><span><span class="tag out">Fuera</span> Torre de gatos</span><small>Libera la pared del reloj para el zapatero.</small></li>
-          <li><span><span class="tag out">Fuera</span> Zapatera de alambre</span><small>La reemplazan el zapatero y los cajones bajo la cama.</small></li>
-          <li><span><span class="tag out">Fuera</span> Reloj adhesivo de números</span><small>La pared queda para el cuadro.</small></li>
-          <li><span><span class="tag out">Cambia</span> Base actual de la cama</span><small>Por una plataforma de madera con cajones.</small></li>
-          <li><span><span class="tag out">Cambia</span> Cajones rojos de la cómoda</span><small>Por unos grises o negros, todos iguales.</small></li>
-          <li><span><span class="tag keep">Al armario</span> Sudaderas, rodillo, mochila</span><small>En ganchos por dentro de la puerta del armario.</small></li>
+          <li><span><span class="tag out">Fuera</span> Torre de gatos</span><small>Libera la pared para el zapatero.</small></li>
+          <li><span><span class="tag out">Fuera</span> Zapatera de alambre</span><small>La reemplazan el zapatero y el organizador de la puerta.</small></li>
+          <li><span><span class="tag out">Fuera</span> Caja de papel higiénico</span><small>Su ropa pasa a tu cajonera nueva.</small></li>
+          <li><span><span class="tag out">Fuera</span> Ganchos de alambre</span><small>Los cambias por ganchos iguales de terciopelo.</small></li>
+          <li><span><span class="tag out">Fuera</span> Reloj adhesivo y balón desinflado</span><small>El balón se va, a menos que lo infles y lo uses.</small></li>
         </ul>
       </div>
       <div class="panel">
         <h3>Se queda</h3>
         <ul class="list">
-          <li><span><span class="tag keep">Igual</span> Secadora</span><small>En su rincón, libre por arriba y a 10 cm de la pared.</small></li>
-          <li><span><span class="tag keep">Igual</span> Colchón twin, TV, cómoda, bocinas</span><small>En las mismas paredes, solo ordenadas.</small></li>
-          <li><span><span class="tag keep">Igual</span> Escritorio con repisa y silla</span><small>Bajo la ventana.</small></li>
-          <li><span><span class="tag keep">Se muda</span> Cuadro del atardecer</span><small>Sobre el zapatero, en la pared oeste.</small></li>
-          <li><span><span class="tag keep">Se muda</span> Fotos y certificado</span><small>Colgados planos sobre la cama, a 160 cm.</small></li>
-          <li><span><span class="tag keep">Se muda</span> Purificador y katana</span><small>Junto a la cómoda y sobre la puerta.</small></li>
+          <li><span><span class="tag keep">Igual</span> Tu cama y tu colchón</span><small>Con topes y almohadillas contra el ruido.</small></li>
+          <li><span><span class="tag keep">Igual</span> Secadora, escritorio, TV, cómoda</span><small>En sus paredes; la secadora sin nada encima.</small></li>
+          <li><span><span class="tag keep">Igual</span> Cajonera de tu novia y el cesto</span><small>Al frente del armario, a la mano.</small></li>
+          <li><span><span class="tag keep">Se muda</span> Caja de la TV</span><small>Parada contra la pared del fondo del armario.</small></li>
+          <li><span><span class="tag keep">Se muda</span> Katana</span><small>A la zona ciega del armario.</small></li>
+          <li><span><span class="tag keep">Se muda</span> Cuadro, fotos, purificador</span><small>Cuadro sobre el zapatero, fotos sobre la cama.</small></li>
         </ul>
       </div>
       <div class="panel">
         <h3>Lista de compra</h3>
         <div class="table-wrap">
           <table class="shop" id="shop">
-            <thead><tr><th>Artículo</th><th>Prioridad</th><th>≈ USD</th></tr></thead>
+            <thead><tr><th>Artículo</th><th>Zona</th><th>≈ USD</th></tr></thead>
             <tbody></tbody>
             <tfoot></tfoot>
           </table>
@@ -283,12 +273,12 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
       <h2>En qué orden hacerlo</h2>
     </div>
     <ol class="steps">
-      <li><h3>Vaciar y contar</h3><p>Saca la torre de gatos y la zapatera. Cuenta tus pares de zapatos: con este plan caben unos 45. Mide la pared del reloj entre el armario y la esquina de la entrada.</p></li>
-      <li><h3>Cama nueva</h3><p>Arma la plataforma con los cajones hacia el cuarto y aprieta todos los tornillos. Ponle almohadillas de goma debajo, topes contra la pared y atorníllala a un montante con el kit de anclaje. Los zapatos de temporada van en los cajones.</p></li>
-      <li><h3>Zapatero</h3><p>Colócalo en la pared oeste, a 5 cm del marco del armario, y ánclalo a la pared con el kit antivuelco. Los zapatos de diario van ahí.</p></li>
-      <li><h3>Paredes</h3><p>Descuelga todo y tapa los agujeros. Cuelga el cuadro sobre el zapatero con el centro a 160 cm, y las fotos y el certificado sobre la cama a la misma altura, con colgadores de seguridad.</p></li>
-      <li><h3>Secadora y escritorio</h3><p>Separa la secadora 10 cm de la pared y deja su parte de arriba vacía. Pasa la papelera bajo el escritorio y revisa que la puerta del armario abra 90°.</p></li>
-      <li><h3>Cortinas, cables y detalles</h3><p>Barra a 235 cm, canaleta para los cables de la TV, LED y cojines. Todo lo suelto va al armario.</p></li>
+      <li><h3>Vaciar el armario</h3><p>Saca todo. Tira la caja de papel y el balón, y separa la ropa que no usaste en un año. Cambia todos los ganchos por los de terciopelo.</p></li>
+      <li><h3>Armar la bodega</h3><p>Para la caja de la TV contra la pared del fondo. Mete el edredón extra y la ropa de temporada en bolsas al vacío: van al fondo de la repisa y en la esquina ciega.</p></li>
+      <li><h3>Frente del armario</h3><p>De izquierda a derecha, viendo hacia dentro: tu cajonera nueva, el cesto y la cajonera de tu novia. Cuelga el organizador en la puerta y revisa que cierre.</p></li>
+      <li><h3>Cuarto</h3><p>Saca la torre de gatos y la zapatera. Pon el zapatero de 80 cm anclado a la pared y cuelga el cuadro encima con el centro a 160 cm.</p></li>
+      <li><h3>Cama y paredes</h3><p>Aprieta los tornillos de la cama, sepárala 3 cm de la pared con topes y ponle las almohadillas. Cuelga las fotos planas sobre la cama.</p></li>
+      <li><h3>Cortinas y cables</h3><p>Barra a 235 cm y canaleta pintada de la TV a la cómoda. La papelera va bajo el escritorio.</p></li>
     </ol>
   </section>
 
@@ -298,11 +288,9 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
       <h2>Notas importantes</h2>
     </div>
     <div class="notes">
-      <p><strong>Las medidas son estimadas</strong> a partir de las fotos, que tienen lente gran angular. Con cama twin calculo unos 315 × 330 cm. Mide la pared oeste: el zapatero necesita 120 cm libres entre el barrido del armario y el de la entrada.</p>
-      <p><strong>La secadora necesita aire por todos lados.</strong> Nada encima, 10 cm libres atrás y a los lados, la cortina lejos y conectada directo a la pared, sin extensión. Si no tiene ducto de salida, deja la puerta del cuarto abierta mientras funciona y limpia el filtro cada vez que la uses.</p>
-      <p><strong>Puerta del armario:</strong> la modelé con la bisagra del lado de la entrada, así que abre hacia el centro del cuarto. Si al abrirla roza la esquina de la secadora, corre la secadora unos centímetros hacia el escritorio.</p>
-      <p><strong>Sobre la cama no va nada suelto.</strong> Solo marcos colgados planos, de dos puntos, a 160 cm del piso, más de 90 cm sobre el colchón. Si la cama se mueve, no se cae nada.</p>
-      <p><strong>Para que la cama no haga ruido:</strong> casi siempre el ruido viene de tres lugares. Los tornillos flojos se arreglan apretándolos cada mes y con arandelas de presión. El roce contra la pared se quita con topes de goma y anclando la cama. Si el colchón es de resortes, uno de espuma o híbrido es mucho más silencioso. Con la plataforma de madera ya no quedan patas que rechinen.</p>
+      <p><strong>Las medidas del armario son estimadas:</strong> unos 155 cm de ancho por dentro (76 de puerta más unos 70 de zona ciega) y 62 cm de fondo. Mide el fondo antes de comprar la cajonera: con la caja de la TV atrás necesitas unos 55 cm.</p>
+      <p><strong>Organizador de la puerta:</strong> con los bolsillos llenos sobresale unos 8 cm. Pruébalo con la ropa colgada antes de quitarle la etiqueta.</p>
+      <p><strong>La secadora sigue necesitando aire:</strong> nada encima, 10 cm libres atrás y a los lados, conectada directo a la pared y con el filtro limpio.</p>
     </div>
   </section>
 
@@ -329,16 +317,41 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
       { n: "Zapatera", r: [140, 200, 300, 328], k: "bad" },
       { n: "Cómoda", r: [203, 313, 290, 328], k: "furn" }
     ],
-    d: [
-      { n: "Cama twin + cajones", r: [217, 314, 4, 195], k: "bed" },
+    p: [
+      { n: "Cama + cajones", r: [217, 314, 4, 195], k: "bed" },
       { n: "Escritorio", r: [94, 214, 8, 68], k: "furn" },
       { n: "Secadora", r: [30, 90, 10, 57], k: "appl" },
       { n: "Silla", c: [155, 100, 30], k: "misc" },
-      { n: "Zapatero", r: [0, 35, 129, 249], k: "wood" },
+      { n: "Zapatero 120", r: [0, 35, 129, 249], k: "wood" },
+      { n: "Purif.", r: [174, 198, 302, 326], k: "misc" },
+      { n: "Cómoda + TV", r: [203, 313, 290, 328], k: "furn" }
+    ],
+    n: [
+      { n: "Cama twin", r: [217, 311, 4, 195], k: "bed" },
+      { n: "Escritorio", r: [94, 214, 8, 68], k: "furn" },
+      { n: "Secadora", r: [30, 90, 10, 57], k: "appl" },
+      { n: "Silla", c: [155, 100, 30], k: "misc" },
+      { n: "Zapatero 80", r: [0, 30, 135, 215], k: "wood" },
       { n: "Purif.", r: [174, 198, 302, 326], k: "misc" },
       { n: "Cómoda + TV", r: [203, 313, 290, 328], k: "furn" }
     ]
   };
+  // armario: x negativo = detrás de la pared oeste
+  var CLOSET = {
+    a: [
+      { n: "Novia", r: [-52, -12, 44, 90], k: "misc" },
+      { n: "Cesto", c: [-32, 112, 16], k: "misc" },
+      { n: "Caja", r: [-50, -15, 128, 160], k: "bad" },
+      { n: "TV", r: [-72, -57, 118, 197], k: "bad" }
+    ],
+    n: [
+      { n: "Novia", r: [-52, -12, 44, 90], k: "misc" },
+      { n: "Cesto", c: [-32, 112, 16], k: "misc" },
+      { n: "Tuya", r: [-52, -12, 133, 180], k: "wood" },
+      { n: "Caja TV", r: [-72, -57, 55, 190], k: "furn" }
+    ]
+  };
+  CLOSET.p = CLOSET.a;
   function freeArea(items, step) {
     var nx = Math.round(WC / step), nz = Math.round(DC / step), occ = 0;
     for (var j = 0; j < nz; j++) for (var i = 0; i < nx; i++) {
@@ -351,82 +364,89 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
     }
     return (nx * nz - occ) * step * step / 10000;
   }
-  var FREE = { a: freeArea(FOOT.a, 2), d: freeArea(FOOT.d, 2) };
+  var FREE = { a: freeArea(FOOT.a, 2), p: freeArea(FOOT.p, 2), n: freeArea(FOOT.n, 2) };
   var fmt = function (v) { return v.toFixed(2).replace(".", ","); };
 
-  /* ---------- Lista de compra ---------- */
+  /* ---------- Lista de compra (plan nuevo, solo lo necesario) ---------- */
   var SHOP = [
-    ["Zapatero con puertas 120 × 35 × 100 cm", "24–30 pares; con kit antivuelco. La tapa hace de mesita.", "e", 150],
-    ["Cama twin de plataforma de madera maciza con 3 cajones", "Tipo captain's bed, sin somier ni patas sueltas.", "e", 300],
-    ["Almohadillas de goma para la base + topes de pared", "Evitan que la cama se deslice y golpee la pared.", "e", 20],
-    ["Kit de anclaje de cama a la pared", "Se atornilla a un montante.", "e", 15],
-    ["Colgadores de seguridad para cuadros", "Dos puntos por marco; no se caen con vibración.", "e", 10],
-    ["Colchón twin de espuma o híbrido, 25 cm", "Solo si el tuyo es de resortes y rechina.", "o", 250],
-    ["Organizador colgante para el costado de la cama", "Para celular, cargador y control; hace de buró.", "o", 15],
-    ["Barra de cortina 150–280 cm + 2 cortinas de 244 cm", "Blanco o lino.", "e", 60],
-    ["Canaleta para cables pintable", "De la TV a la cómoda.", "e", 15],
-    ["Ganchos para puerta (cara interior del armario)", "Sudaderas y chamarras.", "e", 12],
-    ["Lámpara de mesa cálida", "Para la tapa del zapatero.", "o", 30],
-    ["Tira LED USB detrás de la TV", "2 m.", "o", 15],
-    ["Tira LED cálida bajo la repisa del escritorio", "2700–3000 K.", "o", 15],
-    ["3 cojines lumbares", "Gris o arena, contra la pared.", "o", 45],
-    ["Tapete para silla", "Transparente, protege la alfombra.", "o", 30],
-    ["Cajones de tela iguales para la cómoda", "Reemplazan los rojos.", "o", 25],
-    ["Protector de pared para la diana", "Anillo alrededor del tablero.", "o", 25],
-    ["Soporte de pared para katana", "Horizontal, sobre la puerta.", "o", 15]
+    ["Zapatero con puertas 80 × 30 × 100 cm", "16–20 pares; con kit antivuelco.", "Cuarto", 100],
+    ["Barra de cortina 150–280 cm + 2 cortinas de 244 cm", "Blanco o lino.", "Cuarto", 60],
+    ["Almohadillas de goma + topes de pared", "Para que tu cama no se mueva ni golpee la pared.", "Cuarto", 20],
+    ["Canaleta para cables pintable", "De la TV a la cómoda.", "Cuarto", 15],
+    ["Colgadores de seguridad para cuadros", "Fotos y certificado sobre la cama.", "Cuarto", 10],
+    ["Cajonera de 3 gavetas", "Igual a la de tu novia.", "Armario", 30],
+    ["50 ganchos delgados de terciopelo", "Todos del mismo color.", "Armario", 20],
+    ["Organizador de zapatos para puerta, 24 bolsillos", "Unos 12 pares.", "Armario", 15],
+    ["Bolsas al vacío", "Edredón extra y ropa de temporada.", "Armario", 15]
   ];
-  var tb = document.querySelector("#shop tbody"), te = 0, to = 0;
+  var tb = document.querySelector("#shop tbody"), tot = { Cuarto: 0, Armario: 0 };
   SHOP.forEach(function (s) {
-    if (s[2] === "e") te += s[3]; else to += s[3];
+    tot[s[2]] += s[3];
     var tr = document.createElement("tr");
-    tr.innerHTML = "<td>" + s[0] + "<small>" + s[1] + "</small></td><td><span class='prio " + s[2] + "'>" + (s[2] === "e" ? "Esencial" : "Opcional") + "</span></td><td class='num'>$" + s[3] + "</td>";
+    tr.innerHTML = "<td>" + s[0] + "<small>" + s[1] + "</small></td><td><span class='prio o'>" + s[2] + "</span></td><td class='num'>$" + s[3] + "</td>";
     tb.appendChild(tr);
   });
-  document.querySelector("#shop tfoot").innerHTML = "<tr><td>Esencial</td><td></td><td class='num'>$" + te + "</td></tr><tr><td>Todo</td><td></td><td class='num'>$" + (te + to) + "</td></tr>";
+  var TOTAL = tot.Cuarto + tot.Armario;
+  document.querySelector("#shop tfoot").innerHTML = "<tr><td>Cuarto</td><td></td><td class='num'>$" + tot.Cuarto + "</td></tr><tr><td>Armario</td><td></td><td class='num'>$" + tot.Armario + "</td></tr><tr><td>Total</td><td></td><td class='num'>$" + TOTAL + "</td></tr>";
 
   document.getElementById("stats").innerHTML =
-    '<div class="stat"><b class="num">~10 → <span class="up">~45</span></b><span>Pares de zapatos con lugar</span></div>' +
-    '<div class="stat"><b class="num">' + fmt(FREE.a) + ' → <span class="up">' + fmt(FREE.d) + '</span> m²</b><span>Piso libre total</span></div>' +
-    '<div class="stat"><b class="num">9 → 7</b><span>Muebles apoyados en el piso</span></div>' +
-    '<div class="stat"><b class="num">$' + te + '</b><span>Compra esencial estimada</span></div>';
+    '<div class="stat"><b class="num">$587 → <span class="up">$' + TOTAL + '</span></b><span>Compra: plan anterior → plan nuevo</span></div>' +
+    '<div class="stat"><b class="num">' + fmt(FREE.a) + ' → <span class="up">' + fmt(FREE.n) + '</span> m²</b><span>Piso libre: hoy → plan nuevo</span></div>' +
+    '<div class="stat"><b class="num">~10 → <span class="up">~30</span></b><span>Pares de zapatos con lugar</span></div>' +
+    '<div class="stat"><b class="num">0</b><span>Cajas sueltas en el armario</span></div>';
+
+  var CMP = [
+    ["Presupuesto", "≈ $587", "≈ $" + TOTAL],
+    ["Piso libre del cuarto", fmt(FREE.p) + " m²", fmt(FREE.n) + " m²"],
+    ["Pares de zapatos con lugar", "~45", "~30"],
+    ["Cama", "Nueva de plataforma con 3 cajones", "La tuya, con topes y almohadillas"],
+    ["Zapatero en el cuarto", "120 cm", "80 cm"],
+    ["Armario", "Sin cambios", "Cajonera nueva, ganchos iguales, organizador en la puerta y bodega al fondo"],
+    ["Extras (LED, cojines, lámpara)", "Incluidos como opcionales", "Ninguno"]
+  ];
+  document.querySelector("#cmp tbody").innerHTML = CMP.map(function (r) { return "<tr><td><b>" + r[0] + "</b></td><td>" + r[1] + "</td><td>" + r[2] + "</td></tr>"; }).join("");
 
   /* ---------- Plano SVG ---------- */
-  var planMode = "d";
+  var planMode = "n";
   function drawPlan() {
     var svg = document.getElementById("plan"), s = "";
     var fills = { bed: "color-mix(in srgb, var(--accent) 30%, var(--surface))", furn: "color-mix(in srgb, var(--ink) 22%, var(--surface))", appl: "var(--surface)", wood: "color-mix(in srgb, var(--wood) 40%, var(--surface))", misc: "color-mix(in srgb, var(--muted) 22%, var(--surface))", bad: "color-mix(in srgb, var(--bad) 25%, var(--surface))" };
-    s += '<rect x="0" y="0" width="' + WC + '" height="' + DC + '" fill="var(--bg)" />';
-    s += '<text x="120" y="240" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--good)">' + fmt(FREE[planMode]) + ' m² de piso libre</text>';
-    // barridos: armario (bisagra sur, abre hacia el centro) y entrada
-    s += '<path d="M0 125 L0 49 A76 76 0 0 1 76 125 Z" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" />';
-    s += '<line x1="0" y1="125" x2="76" y2="125" stroke="var(--muted)" stroke-width="2" />';
-    s += '<path d="M10 330 L10 250 A80 80 0 0 1 90 330" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" />';
-    if (planMode === "d") s += '<rect x="30" y="10" width="60" height="47" fill="color-mix(in srgb, var(--bad) 18%, transparent)" stroke="var(--bad)" stroke-dasharray="3 2" />';
-    FOOT[planMode].forEach(function (it) {
-      var f = fills[it.k];
+    function item(it, fs) {
+      var f = fills[it.k], o = "";
       if (it.r) {
-        s += '<rect x="' + it.r[0] + '" y="' + it.r[2] + '" width="' + (it.r[1] - it.r[0]) + '" height="' + (it.r[3] - it.r[2]) + '" rx="2" fill="' + f + '" stroke="var(--ink)" stroke-width="1" ' + (it.k === "appl" && planMode === "d" ? 'fill-opacity=".6"' : '') + '/>';
-        var cx = (it.r[0] + it.r[1]) / 2, cy = (it.r[2] + it.r[3]) / 2;
-        var vert = (it.r[3] - it.r[2]) > (it.r[1] - it.r[0]) * 1.6;
-        var lbl = it.n.length > 12 && !vert ? it.n.split(" + ") : [it.n];
-        lbl.forEach(function (t, li) {
-          var yy = cy + 3.5 + (li - (lbl.length - 1) / 2) * 12;
-          s += '<text x="' + cx + '" y="' + yy + '" text-anchor="middle" font-size="10" font-family="IBM Plex Sans, sans-serif" fill="var(--ink)"' + (vert ? ' transform="rotate(-90 ' + cx + ' ' + cy + ')"' : '') + '>' + (li ? "+ " : "") + t + '</text>';
-        });
+        o += '<rect x="' + it.r[0] + '" y="' + it.r[2] + '" width="' + (it.r[1] - it.r[0]) + '" height="' + (it.r[3] - it.r[2]) + '" rx="2" fill="' + f + '" stroke="var(--ink)" stroke-width="1" />';
+        var cx = (it.r[0] + it.r[1]) / 2, cy = (it.r[2] + it.r[3]) / 2, vert = (it.r[3] - it.r[2]) > (it.r[1] - it.r[0]) * 1.6;
+        o += '<text x="' + cx + '" y="' + (cy + fs * .35) + '" text-anchor="middle" font-size="' + fs + '" font-family="IBM Plex Sans, sans-serif" fill="var(--ink)"' + (vert ? ' transform="rotate(-90 ' + cx + ' ' + cy + ')"' : '') + '>' + it.n + '</text>';
       } else {
-        s += '<circle cx="' + it.c[0] + '" cy="' + it.c[1] + '" r="' + it.c[2] + '" fill="' + f + '" stroke="var(--ink)" />';
-        s += '<text x="' + it.c[0] + '" y="' + (it.c[1] + 3.5) + '" text-anchor="middle" font-size="' + (it.c[2] < 20 ? 7 : 10) + '" font-family="IBM Plex Sans, sans-serif" fill="var(--ink)">' + it.n + '</text>';
+        o += '<circle cx="' + it.c[0] + '" cy="' + it.c[1] + '" r="' + it.c[2] + '" fill="' + f + '" stroke="var(--ink)" />';
+        o += '<text x="' + it.c[0] + '" y="' + (it.c[1] + 3) + '" text-anchor="middle" font-size="' + (it.c[2] < 20 ? 7 : 10) + '" font-family="IBM Plex Sans, sans-serif" fill="var(--ink)">' + it.n + '</text>';
       }
-    });
+      return o;
+    }
+    s += '<rect x="0" y="0" width="' + WC + '" height="' + DC + '" fill="var(--bg)" />';
+    s += '<rect x="-72" y="42" width="72" height="155" fill="var(--bg)" />';
+    s += '<text x="140" y="240" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--good)">' + fmt(FREE[planMode]) + ' m² de piso libre</text>';
+    s += '<path d="M0 125 L0 49 A76 76 0 0 1 76 125 Z" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" />';
+    s += '<path d="M10 330 L10 250 A80 80 0 0 1 90 330" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" />';
+    if (planMode !== "a") s += '<rect x="30" y="10" width="60" height="47" fill="color-mix(in srgb, var(--bad) 18%, transparent)" stroke="var(--bad)" stroke-dasharray="3 2" />';
+    FOOT[planMode].forEach(function (it) { s += item(it, 10); });
+    CLOSET[planMode].forEach(function (it) { s += item(it, 7); });
+    // barra del armario y organizador en la puerta
+    s += '<line x1="-44" y1="45" x2="-44" y2="194" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="6 2" />';
+    if (planMode === "n") s += '<line x1="4" y1="50" x2="4" y2="124" stroke="var(--wood)" stroke-width="5" />';
+    // muros del cuarto y del armario
     s += '<rect x="-6" y="-6" width="' + (WC + 12) + '" height="' + (DC + 12) + '" fill="none" stroke="var(--ink)" stroke-width="12" />';
+    s += '<path d="M-6 42 L-78 42 L-78 197 L-6 197" fill="none" stroke="var(--ink)" stroke-width="12" />';
     s += '<line x1="98" y1="-6" x2="192" y2="-6" stroke="#9cc3e6" stroke-width="12" />';
     s += '<line x1="10" y1="336" x2="90" y2="336" stroke="var(--bg)" stroke-width="12" />';
-    s += '<line x1="-6" y1="49" x2="-6" y2="125" stroke="var(--bg)" stroke-width="12" />';
+    s += '<line x1="-6" y1="49" x2="-6" y2="125" stroke="var(--bg)" stroke-width="13" />';
+    s += '<line x1="-6" y1="125" x2="-6" y2="197" stroke="var(--bg)" stroke-width="13" />';
     var t = 'font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)"';
     s += '<text x="145" y="-18" text-anchor="middle" ' + t + '>VENTANA · norte</text>';
     s += '<text x="157" y="-30" text-anchor="middle" ' + t + '>315 cm</text>';
-    s += '<text x="-26" y="230" text-anchor="middle" ' + t + ' transform="rotate(-90 -26 230)">330 cm · oeste</text>';
-    s += '<text x="-16" y="87" text-anchor="middle" ' + t + ' transform="rotate(-90 -16 87)">ARMARIO</text>';
+    s += '<text x="-26" y="270" text-anchor="middle" ' + t + ' transform="rotate(-90 -26 270)">330 cm · oeste</text>';
+    s += '<text x="-90" y="120" text-anchor="middle" ' + t + ' transform="rotate(-90 -90 120)">ARMARIO · 155 cm</text>';
+    s += '<text x="-40" y="212" text-anchor="middle" ' + t + ' font-size="8">zona ciega</text>';
     s += '<text x="50" y="356" text-anchor="middle" ' + t + '>ENTRADA</text>';
     s += '<text x="258" y="356" text-anchor="middle" ' + t + '>TV · sur</text>';
     s += '<text x="333" y="165" text-anchor="middle" ' + t + ' transform="rotate(90 333 165)">este · cama</text>';
@@ -445,36 +465,49 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   var PINS = {
     a: [
       { t: "Torre de gatos", s: "Ocupa el centro de la pared y corta el paso.", p: [0.3, 1.25, 1.8] },
-      { t: "Papelera en el rincón", s: "Estorba el paso al armario y queda a la vista.", p: [0.15, 0.55, 0.3] },
+      { t: "Papelera en el rincón", s: "Estorba y queda a la vista.", p: [0.15, 0.55, 0.3] },
       { t: "Zapatera chica y abierta", s: "No caben todos tus zapatos y es lo primero que se ve.", p: [1.7, 0.85, 3.12] },
-      { t: "Cables colgando", s: "Bajan de la TV a la cómoda sobre la pared clara.", p: [2.5, 1.05, 3.26] },
+      { t: "Cables colgando", s: "Bajan de la TV a la cómoda.", p: [2.5, 1.05, 3.26] },
       { t: "Ropa en la entrada", s: "Tres sudaderas colgadas en la puerta.", p: [0.52, 1.55, 3.18] },
-      { t: "Cuadros dispersos", s: "Tres piezas a distintas alturas en la pared de la cama.", p: [W - 0.03, 1.7, 1.45] },
-      { t: "Reloj de números sueltos", s: "Se ve como manchas en la pared.", p: [0.03, 1.95, 1.8] },
-      { t: "Cortina corta y angosta", s: "Hace ver la ventana y el techo más bajos.", p: [1.45, 2.16, 0.06] },
-      { t: "Nada debajo de la cama", s: "Una cama baja desperdicia todo ese volumen.", p: [2.2, 0.2, 1.0] }
+      { t: "Cuadros dispersos", s: "Tres piezas a distintas alturas.", p: [W - 0.03, 1.7, 1.45] },
+      { t: "Cortina corta y angosta", s: "La ventana y el techo se ven más bajos.", p: [1.45, 2.16, 0.06] },
+      { t: "Caja de papel con ropa", s: "Ocupa el frente del armario.", p: [-0.32, 0.6, 1.44], closet: true },
+      { t: "Caja de la TV cruzada", s: "Tapa la zona ciega del armario.", p: [-0.64, 1.1, 1.6], closet: true },
+      { t: "Ganchos de todos tipos", s: "Los de alambre ocupan más y se enredan.", p: [-0.44, 1.72, 0.9], closet: true },
+      { t: "Repisa a reventar", s: "Los edredones abultados ocupan media repisa.", p: [-0.55, 2.05, 0.65], closet: true }
     ],
-    d: [
-      { t: "Cama firme con cajones", s: "Plataforma de madera maciza anclada a la pared; 3 cajones de zapatos.", p: [2.2, 0.2, 1.0] },
-      { t: "Fotos colgadas planas", s: "A 160 cm, con colgadores de seguridad. Nada suelto.", p: [W - 0.03, 1.85, 1.0] },
-      { t: "TV limpia", s: "Frente a la cama, cables ocultos y LED trasero.", p: [2.53, 2.12, 3.22] },
-      { t: "Cómoda uniforme", s: "Cajones iguales, bocinas a los lados.", p: [2.2, 0.55, 2.88] },
+    p: [
+      { t: "Cama nueva con cajones", s: "Plataforma de madera maciza, unos $300.", p: [2.2, 0.2, 1.0] },
+      { t: "Fotos colgadas planas", s: "A 160 cm, con colgadores de seguridad.", p: [W - 0.03, 1.85, 1.0] },
+      { t: "TV con LED", s: "Canaleta y LED trasero (opcional).", p: [2.53, 2.12, 3.22] },
       { t: "Purificador", s: "En el hueco de la zapatera vieja.", p: [1.86, 0.95, 3.14] },
-      { t: "Diana a 173 cm", s: "Altura reglamentaria, con protector.", p: [1.2, 1.73, 3.22] },
-      { t: "Entrada despejada", s: "Sin ropa en la puerta; katana montada encima.", p: [0.5, 2.25, 3.22] },
-      { t: "Zapatero-mesita", s: "120 cm con puertas, 24–30 pares; lámpara encima.", p: [0.2, 1.05, 1.89] },
-      { t: "Cuadro del atardecer", s: "Centrado sobre el zapatero.", p: [0.03, 1.6, 1.89] },
-      { t: "Armario libre", s: "Abre hacia el centro; nada en su barrido.", p: [0.35, 0.05, 0.95] },
+      { t: "Zapatero de 120 cm", s: "24–30 pares, con lámpara encima.", p: [0.2, 1.05, 1.89] },
       { t: "Secadora con aire", s: "Nada encima y 10 cm libres atrás.", p: [0.6, 0.78, 0.33] },
-      { t: "Escritorio", s: "LED cálido bajo la repisa, papelera debajo.", p: [1.55, 1.48, 0.3] },
-      { t: "Cortinas altas", s: "Barra a 235 cm: la ventana se ve más grande.", p: [1.05, 2.3, 0.07] }
+      { t: "Cojines lumbares", s: "Opcionales, para usar la cama de sillón.", p: [W - 0.1, 0.95, 1.2] },
+      { t: "Armario sin cambios", s: "Este plan no tocaba el interior.", p: [-0.4, 1.0, 1.2], closet: true }
+    ],
+    n: [
+      { t: "Tu cama, sin ruido", s: "Separada 3 cm de la pared, con topes y almohadillas.", p: [2.2, 0.3, 1.0] },
+      { t: "Fotos colgadas planas", s: "A 160 cm, nada suelto sobre la cama.", p: [W - 0.03, 1.85, 1.0] },
+      { t: "TV con canaleta", s: "Cables ocultos, sin extras.", p: [2.53, 2.12, 3.22] },
+      { t: "Purificador y diana", s: "Purificador junto a la cómoda; diana a 173 cm.", p: [1.86, 0.95, 3.14] },
+      { t: "Zapatero de 80 cm", s: "16–20 pares, con el cuadro encima.", p: [0.17, 1.05, 1.75] },
+      { t: "Secadora con aire", s: "Nada encima y 10 cm libres atrás.", p: [0.6, 0.78, 0.33] },
+      { t: "Cortinas altas", s: "Barra a 235 cm.", p: [1.05, 2.3, 0.07] },
+      { t: "Organizador en la puerta", s: "Unos 12 pares por dentro de la puerta del armario.", p: [0.2, 1.3, 0.95], closet: true },
+      { t: "Tu cajonera nueva", s: "Igual a la de tu novia; aquí va la ropa de la caja.", p: [-0.32, 0.72, 1.56], closet: true },
+      { t: "Cesto y cajonera de tu novia", s: "Se quedan al frente, a la mano.", p: [-0.32, 0.72, 0.67], closet: true },
+      { t: "Caja de la TV al fondo", s: "Parada contra la pared, lista para la mudanza.", p: [-0.66, 0.9, 1.3], closet: true },
+      { t: "Ganchos iguales", s: "De terciopelo: caben más y se ve ordenado.", p: [-0.44, 1.72, 0.9], closet: true },
+      { t: "Bolsas al vacío", s: "Edredones y ropa de temporada en la zona ciega.", p: [-0.55, 1.95, 1.7], closet: true }
     ]
   };
-  var mode = "d";
+  var TITLES = { a: "Lo que hoy estorba", p: "Plan anterior", n: "Plan nuevo" };
+  var mode = "n";
   var legend = document.getElementById("legend");
   function renderLegend() {
     var bad = mode === "a";
-    var h = '<h3>' + (bad ? "Lo que hoy estorba" : "Qué cambia") + '</h3><p>Toca un punto para verlo de cerca.</p><ol>';
+    var h = '<h3>' + TITLES[mode] + '</h3><p>Toca un punto para verlo de cerca; los del armario abren la puerta.</p><ol>';
     PINS[mode].forEach(function (p, i) {
       h += '<li><button type="button" class="' + (bad ? "bad" : "") + '" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span><b>' + p.t + '</b><small>' + p.s + '</small></span></button></li>';
     });
@@ -510,8 +543,8 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   room.position.set(-W / 2, 0, -D / 2);
   scene.add(room);
   function R(x, y, z) { return new THREE.Vector3(x - W / 2, y, z - D / 2); }
-  var G = { c: new THREE.Group(), a: new THREE.Group(), d: new THREE.Group() };
-  room.add(G.c, G.a, G.d);
+  var G = { c: new THREE.Group(), a: new THREE.Group(), p: new THREE.Group(), n: new THREE.Group() };
+  room.add(G.c, G.a, G.p, G.n);
 
   function canvasTex(w, h, draw, rep) {
     var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
@@ -619,7 +652,16 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   }
   wall("N", -T, W + T, -T, 0, 0, W, 0, 0.012);
   wall("S", -T, W + T, D, D + T, 0, W, D - 0.012, D);
-  wall("W", -T, 0, 0, D, 0, 0.012, 0, D);
+  (function () {
+    var wm = new THREE.MeshStandardMaterial({ color: 0xd3d4d2, roughness: .95, transparent: true, opacity: 1 });
+    var bm = new THREE.MeshStandardMaterial({ color: 0xf3f2ee, roughness: .6, transparent: true, opacity: 1 });
+    var im = new THREE.MeshStandardMaterial({ color: 0xcfcdc6, roughness: .95, transparent: true, opacity: 1 });
+    box(G.c, -T, 0, 0, H, 0, 0.49, wm); box(G.c, -T, 0, 0, H, 1.25, D, wm); box(G.c, -T, 0, 2.03, H, 0.49, 1.25, wm);
+    box(G.c, 0, 0.012, 0, 0.09, 0, 0.45, bm, true); box(G.c, 0, 0.012, 0, 0.09, 1.29, D, bm, true);
+    box(G.c, -0.82, -0.72, 0, H, 0.32, 2.07, im); box(G.c, -0.82, -T, 0, H, 0.32, 0.42, im); box(G.c, -0.82, -T, 0, H, 1.97, 2.07, im);
+    box(G.c, -0.72, -T, -0.02, 0, 0.42, 1.97, new THREE.MeshStandardMaterial({ map: texCarpet, roughness: 1 }), true);
+    WALLS.W = [wm, bm, im];
+  })();
   wall("E", W, W + T, 0, D, W - 0.012, W, 0, D);
 
   // ventana
@@ -638,11 +680,9 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
 
   // armario (oeste): bisagra al sur, perilla al norte
   var trW = gm("W", 0xf3f2ee);
-  box(G.c, 0, 0.02, 0, 2.08, 0.45, 1.29, trW, true);
-  box(G.c, 0.02, 0.05, 0, 2.03, 0.49, 1.25, trW);
-  box(G.c, 0.05, 0.06, 0.42, 1.88, 0.7, 1.04, gm("W", 0x1d1e23), true);
-  box(G.c, 0.06, 0.065, 0.45, 1.85, 0.73, 1.01, gm("W", 0xc7d3de, { metalness: .5, roughness: .08 }), true);
-  cyl(G.c, .025, .025, .06, 0.08, 1.0, 0.55, gm("W", 0xb9a071, { metalness: .6, roughness: .35 }), [0, 0, Math.PI / 2]);
+  box(G.c, 0, 0.02, 0, 2.08, 0.45, 0.49, trW, true);
+  box(G.c, 0, 0.02, 0, 2.08, 1.25, 1.29, trW, true);
+  box(G.c, 0, 0.02, 2.03, 2.08, 0.45, 1.29, trW, true);
 
   /* ---- Comunes ---- */
   // escritorio con repisa
@@ -671,9 +711,9 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   box(G.c, 1.915, 3.145, 1.315, 2.035, 3.24, 3.285, spk);
   plane(G.c, 1.2, 0.69, 2.53, 1.675, 3.2395, Math.PI, new THREE.MeshBasicMaterial({ map: texTV, toneMapped: false }));
 
-  function bed(p, top, platform) {
+  function bed(p, top, platform, gap) {
     // top = altura superior del colchón
-    var x0 = 2.17, x1 = W - 0.01, bm = top - 0.22;
+    var x0 = 2.17, x1 = W - (gap || 0.01), bm = top - 0.22;
     if (platform) {
       var pw = mat("platform", 0x2b2724, { roughness: .55 }), pf = mat("platformF", 0x35302c, { roughness: .5 });
       box(p, x0, x1, 0.01, bm, 0.04, 1.95, pw);
@@ -713,6 +753,66 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
     box(g, 0.27, 0.33, 0.62, 0.66, -0.2, 0.12, chairM);
     if (messy) { var cl = cyl(g, 0.16, 0.2, 0.14, 0, 0.6, 0.05, white); cl.scale.set(1, 1, .8); }
   }
+
+  /* ---- Armario: interior (comunes) ---- */
+  var shelfM = mat("shelf", 0xf2f1ed, { roughness: .6 });
+  box(G.c, -0.72, -0.38, 1.76, 1.79, 0.42, 1.97, shelfM);
+  cyl(G.c, .014, .014, 1.53, -0.44, 1.69, 1.195, shelfM, [Math.PI / 2, 0, 0]);
+  var cLight = new THREE.PointLight(0xfff4e6, 0.55, 2.2, 2); cLight.position.set(-0.3, 2.1, 1.2); G.c.add(cLight);
+  function hangers(p, uniform, palette, z0, z1, gap) {
+    var hm = [mat("hW", 0x9a9a9a, { metalness: .6, roughness: .4 }), mat("hO", 0xe0662c), mat("hWh", 0xf0f0f0), mat("hB", 0x1a1a1a), mat("hG", 0x2f6b45)];
+    var i = 0;
+    for (var z = z0; z < z1; z += gap) {
+      var col = palette[i % palette.length];
+      var len = uniform ? 0.62 + (i % 3) * 0.03 : 0.5 + ((i * 37) % 7) * 0.05;
+      box(p, -0.62, -0.26, 1.66 - len, 1.62, z - gap * 0.38, z + gap * 0.38, mat("cl" + col, col, { roughness: 1 }));
+      box(p, -0.6, -0.28, 1.62, 1.66, z - 0.006, z + 0.006, uniform ? hm[3] : hm[(i * 3) % 5], true);
+      i++;
+    }
+  }
+  function drawers(p, z0, z1) {
+    var dm = mat("drw", 0x8e9299, { roughness: .8 }), dh = mat("drwH", 0x55585e);
+    box(p, -0.52, -0.12, 0, 0.64, z0, z1, dm);
+    [0.06, 0.26, 0.46].forEach(function (y) { box(p, -0.12, -0.11, y + 0.07, y + 0.1, (z0 + z1) / 2 - 0.08, (z0 + z1) / 2 + 0.08, dh, true); box(p, -0.12, -0.115, y, y + 0.18, z0 + 0.02, z1 - 0.02, mat("drwF", 0x9ca0a7), true); });
+  }
+  function hamper(p) { cyl(p, 0.17, 0.15, 0.55, -0.32, 0.275, 1.12, mat("hamper", 0x6f7680, { roughness: 1 })); }
+  function closetOld(p) {
+    // repisa saturada
+    box(p, -0.7, -0.44, 1.79, 2.25, 0.45, 0.82, mat("bagBed", 0x2a2a30, { roughness: .5 }));
+    box(p, -0.66, -0.4, 1.79, 2.05, 0.84, 1.28, mat("quilt", 0x2b3f7a, { roughness: 1 }));
+    box(p, -0.66, -0.42, 2.0, 2.16, 0.86, 1.12, mat("teal", 0x1d5a63, { roughness: 1 }));
+    cyl(p, 0.15, 0.15, 0.08, -0.55, 1.83, 1.42, mat("tray", 0x9aa0a8, { transparent: true, opacity: .7 }));
+    box(p, -0.6, -0.5, 1.79, 2.0, 1.58, 1.66, mat("nurlux", 0x2c5a66));
+    box(p, -0.66, -0.4, 1.79, 1.95, 1.68, 1.92, mat("jeans", 0x3b4d73, { roughness: 1 }));
+    hangers(p, false, [0x222222, 0xd8d0b8, 0x2b56c9, 0xf2f2f2, 0x333a44, 0x8fb0d8, 0x111111, 0x5a5f6b, 0xe8e4dc], 0.5, 1.94, 0.045);
+    // piso
+    drawers(p, 0.44, 0.9);
+    box(p, -0.5, -0.15, 0, 0.5, 1.2, 1.55, mat("cardboard", 0xa8835a, { roughness: 1 }));
+    box(p, -0.52, -0.13, 0.5, 0.64, 1.18, 1.56, mat("clothPile", 0x2a2a2a, { roughness: 1 }));
+    var tvb = box(p, -0.72, -0.6, 0, 1.3, 1.15, 1.95, mat("tvbox", 0xe8591f, { roughness: .9 })); tvb.rotation.x = -0.05;
+    var ball = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 14), mat("ball", 0xe0782f)); ball.scale.set(1, 0.55, 1); ball.position.set(-0.4, 0.07, 1.02); p.add(ball);
+    box(p, -0.3, -0.05, 0, 0.1, 1.4, 1.5, mat("shoeC", 0xf2f2f2));
+  }
+  closetOld(G.a); closetOld(G.p);
+  hamper(G.a); hamper(G.p);
+
+  /* ---- Puerta del armario (bisagra al sur, abre hacia el cuarto) ---- */
+  var door = new THREE.Group(); door.position.set(0.035, 0, 1.25); G.c.add(door);
+  box(door, -0.015, 0.015, 0, 2.03, -0.76, 0, trW);
+  box(door, 0.015, 0.025, 0.42, 1.88, -0.55, -0.21, gm("W", 0x1d1e23), true);
+  box(door, 0.025, 0.03, 0.45, 1.85, -0.52, -0.24, gm("W", 0xc7d3de, { metalness: .5, roughness: .08 }), true);
+  var knobM = gm("W", 0xb9a071, { metalness: .6, roughness: .35 });
+  cyl(door, .025, .025, .05, 0.04, 1.0, -0.7, knobM, [0, 0, Math.PI / 2]);
+  cyl(door, .025, .025, .05, -0.04, 1.0, -0.7, knobM, [0, 0, Math.PI / 2]);
+  var org = new THREE.Group(); door.add(org);
+  box(org, -0.05, -0.015, 0.18, 1.9, -0.72, -0.06, mat("orgB", 0xcfd4da, { roughness: .6 }), true);
+  var sc = [0xffffff, 0x222222, 0xe4c7c9, 0x2d3f73, 0xd8d2c8, 0x8c8c8c];
+  for (var r = 0; r < 8; r++) for (var cc = 0; cc < 3; cc++) {
+    box(org, -0.075, -0.05, 0.24 + r * 0.205, 0.38 + r * 0.205, -0.7 + cc * 0.21, -0.52 + cc * 0.21, mat("pk" + ((r + cc) % 6), sc[(r + cc) % 6]), true);
+  }
+  var doorOpen = false, doorBtn = document.getElementById("door-t");
+  function setDoor(v) { doorOpen = v; doorBtn.textContent = v ? "Cerrar armario" : "Abrir armario"; doorBtn.setAttribute("aria-pressed", v ? "true" : "false"); }
+  doorBtn.addEventListener("click", function () { setDoor(!doorOpen); });
 
   /* ---- ANTES ---- */
   (function () {
@@ -759,7 +859,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
 
   /* ---- DESPUÉS ---- */
   (function () {
-    var Dd = G.d;
+    var Dd = G.p;
     // cama twin elevada + cajones rodantes
     bed(Dd, 0.64, true);
     // almohadillas y topes contra la pared
@@ -842,6 +942,72 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
     s2.rotation.x = -Math.PI / 2; s2.position.set(0.1, 0.004, D); Dd.add(s2);
   })();
 
+  /* ---- PLAN NUEVO ---- */
+  (function () {
+    var N = G.n;
+    // tu cama actual, separada 3 cm de la pared con topes de goma
+    bed(N, 0.5, false, 0.04);
+    [0.3, 1.0, 1.7].forEach(function (z) { box(N, W - 0.035, W - 0.005, 0.18, 0.26, z - 0.03, z + 0.03, mat("rubber", 0x111111), true); });
+    // fotos y certificado colgados planos
+    box(N, W - 0.025, W - 0.005, 1.4, 1.8, 0.45, 0.85, spk);
+    plane(N, 0.36, 0.36, W - 0.027, 1.6, 0.65, -Math.PI / 2, new THREE.MeshStandardMaterial({ map: texCollage }));
+    box(N, W - 0.025, W - 0.005, 1.44, 1.76, 1.0, 1.5, white);
+    plane(N, 0.46, 0.28, W - 0.027, 1.6, 1.25, -Math.PI / 2, new THREE.MeshStandardMaterial({ map: texCert }));
+    // secadora libre + zona de aire, papelera bajo el escritorio
+    dryer(N, 0.1);
+    box(N, 0.3, 0.9, 0.71, 1.3, 0.1, 0.57, new THREE.MeshBasicMaterial({ color: 0xe0664f, transparent: true, opacity: .12, depthWrite: false }), true);
+    cyl(N, .1, .09, .3, 1.1, 0.15, 0.28, black);
+    // zapatero de 80 cm con cuadro encima
+    var cab = mat("cab", 0x2a2b31, { roughness: .6 });
+    box(N, 0.0, 0.3, 0.04, 1.0, 1.35, 2.15, cab);
+    box(N, 0.0, 0.31, 0.0, 0.04, 1.36, 2.14, black);
+    box(N, 0.0, 0.32, 1.0, 1.03, 1.34, 2.16, cab);
+    [1.35, 1.75].forEach(function (z) {
+      box(N, 0.3, 0.307, 0.06, 0.98, z + 0.01, z + 0.39, mat("cabF", 0x33343b, { roughness: .5 }), true);
+      box(N, 0.307, 0.32, 0.8, 0.83, z + 0.17, z + 0.23, wood, true);
+    });
+    box(N, 0.06, 0.26, 1.03, 1.05, 1.5, 1.72, black);
+    beach(N, 0.005, 1.75, 1.62, 1);
+    // purificador, diana a 1.73, cómoda con sus cajones actuales
+    box(N, 1.74, 1.98, 0, 0.88, 3.02, 3.26, spk);
+    dart(N, 1.2, 1.73);
+    var red = mat("red", 0xb73b3b), fab = mat("fab", 0x2a2b30);
+    for (var c = 0; c < 3; c++) for (var r = 0; r < 2; r++) box(N, 2.08 + c * 0.35, 2.4 + c * 0.35, 0.08 + r * 0.36, 0.4 + r * 0.36, 2.885, 2.9, c === 0 ? red : fab, true);
+    box(N, 2.51, 2.56, 0.83, 1.32, 3.285, 3.3, mat("raceway", 0xd6d7d5), true);
+    chair(N, 1.55, 1.0, false);
+    // cortinas altas
+    var curt = mat("curtD", 0xf4f3ef, { roughness: 1 });
+    cyl(N, .014, .014, 1.2, 1.55, 2.36, 0.06, black, [0, 0, Math.PI / 2]);
+    for (var k = 0; k < 3; k++) box(N, 0.97 + k * 0.06, 1.02 + k * 0.06, 0.78, 2.34, 0.02 + (k % 2) * 0.03, 0.06 + (k % 2) * 0.03, curt);
+    for (var k2 = 0; k2 < 3; k2++) box(N, 1.97 + k2 * 0.055, 2.02 + k2 * 0.055, 0.78, 2.34, 0.02 + (k2 % 2) * 0.03, 0.06 + (k2 % 2) * 0.03, curt);
+    // barridos de puertas
+    var swingM = new THREE.MeshBasicMaterial({ color: 0x3aa06f, transparent: true, opacity: .16, depthWrite: false });
+    var s1 = new THREE.Mesh(new THREE.CircleGeometry(0.76, 32, 0, Math.PI / 2), swingM);
+    s1.rotation.x = -Math.PI / 2; s1.position.set(0.02, 0.004, 1.25); N.add(s1);
+    var s2 = new THREE.Mesh(new THREE.CircleGeometry(0.8, 32, 0, Math.PI / 2), swingM);
+    s2.rotation.x = -Math.PI / 2; s2.position.set(0.1, 0.004, D); N.add(s2);
+
+    // ---- armario ordenado ----
+    // repisa: jeans en pilas, perfumes, bolsas al vacío en la zona ciega
+    [0.5, 0.66].forEach(function (z) { box(N, -0.66, -0.42, 1.79, 1.95, z, z + 0.14, mat("jeans", 0x3b4d73, { roughness: 1 })); });
+    box(N, -0.66, -0.42, 1.79, 1.9, 0.82, 0.96, mat("tees", 0xbfb8aa, { roughness: 1 }));
+    cyl(N, 0.15, 0.15, 0.08, -0.55, 1.83, 1.12, mat("tray", 0x9aa0a8, { transparent: true, opacity: .7 }));
+    box(N, -0.6, -0.5, 1.79, 2.0, 1.3, 1.38, mat("nurlux", 0x2c5a66));
+    var vac = mat("vac", 0x9fb0c4, { roughness: .2, transparent: true, opacity: .85 });
+    box(N, -0.7, -0.42, 1.79, 1.92, 1.45, 1.95, vac);
+    box(N, -0.7, -0.44, 1.92, 2.04, 1.47, 1.93, mat("vac2", 0x7a8ba3, { roughness: .2 }));
+    // ganchos iguales, ropa ordenada por color; la de tu novia a la derecha (norte)
+    hangers(N, true, [0xf0ede6, 0xd8d0b8, 0x8fb0d8, 0x2b56c9, 0x333a44, 0x222222], 0.9, 1.94, 0.052);
+    hangers(N, true, [0xe7c9cf, 0xf2f2f2, 0xb58fa3], 0.47, 0.86, 0.052);
+    // piso: novia · cesto · tu cajonera; caja de la TV al fondo; katana en la esquina ciega
+    drawers(N, 0.44, 0.9);
+    hamper(N);
+    drawers(N, 1.33, 1.8);
+    box(N, -0.72, -0.57, 0, 0.82, 0.55, 1.9, mat("tvbox", 0xe8591f, { roughness: .9 }));
+    box(N, -0.52, -0.2, 0, 0.3, 1.82, 1.96, vac);
+    cyl(N, .018, .018, 0.95, -0.62, 0.48, 1.94, mat("katana", 0x8e1f1b), [0.1, 0, 0]);
+  })();
+
   /* ---- Luces ---- */
   scene.add(new THREE.HemisphereLight(0xf4f6ff, 0x6b5b48, 0.75));
   var sun = new THREE.DirectionalLight(0xfff2de, 1.1);
@@ -854,7 +1020,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   /* ---- Modo ---- */
   function setMode(m) {
     mode = m;
-    G.a.visible = m === "a"; G.d.visible = m === "d";
+    G.a.visible = m === "a"; G.p.visible = m === "p"; G.n.visible = m === "n"; org.visible = m === "n";
     document.querySelectorAll("[data-mode]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.mode === m ? "true" : "false"); });
     renderLegend(); buildPins();
   }
@@ -887,6 +1053,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   var VIEWS = {
     pano: { pos: R(5.1, 4.3, -2.0), tgt: R(1.5, 0.6, 1.75) },
     plan: { pos: R(W / 2, 7.2, 1.66), tgt: R(W / 2, 0, 1.65) },
+    closet: { pos: R(2.0, 1.55, 0.8), look: R(-0.45, 1.0, 1.25), inside: true },
     door: { pos: R(0.72, 1.68, 3.12), look: R(1.45, 0.9, 0.3), inside: true },
     bed: { pos: R(2.66, 1.3, 0.5), look: R(2.5, 1.45, 3.3), inside: true }
   };
@@ -911,6 +1078,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   }
   function goView(name) {
     var v = VIEWS[name];
+    if (name === "closet") setDoor(true);
     document.querySelectorAll("[data-view]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.view === name ? "true" : "false"); });
     if (v.inside) {
       var dir = v.look.clone().sub(v.pos).normalize();
@@ -922,6 +1090,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   document.querySelectorAll("[data-view]").forEach(function (b) { b.addEventListener("click", function () { goView(b.dataset.view); }); });
   function focusPin(i) {
     var p = PINS[mode][i].p, t = R(p[0], p[1], p[2]);
+    if (PINS[mode][i].closet) setDoor(true);
     var dx = W / 2 - p[0], dz = D / 2 - p[2], len = Math.hypot(dx, dz) || 1;
     var cp = new THREE.Vector3(p[0] + dx / len * 2.3, Math.max(1.7, p[1] + 0.6), p[2] + dz / len * 2.3);
     if (Math.hypot(dx, dz) < 0.3) cp.set(p[0] + 1.6, 2.6, p[2] + 1.6);
@@ -961,6 +1130,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
   }
   function frame(now) {
     if (tween) tween(now);
+    door.rotation.y += ((doorOpen ? -Math.PI / 2 : 0) - door.rotation.y) * (reduce ? 1 : 0.12);
     controls.update();
     wallGhost();
     renderer.render(scene, camera);
@@ -974,7 +1144,7 @@ footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--l
     }
     requestAnimationFrame(frame);
   }
-  setMode("d");
+  setMode("n");
   requestAnimationFrame(frame);
 })();
 </script>

@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuarto Reorganizado 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: visor 3D a sangre como pieza principal + leyenda lateral; debajo, plano acotado y listas de trabajo en grilla de 8px. */
+:root {
+  --bg: #eef0f3;
+  --surface: #ffffff;
+  --ink: #151a24;
+  --muted: #586070;
+  --line: #d8dce3;
+  --accent: #24366a;      /* azul marino del edredón */
+  --accent-ink: #ffffff;
+  --wood: #a8733f;        /* tablero de madera nuevo */
+  --bad: #b23a2a;
+  --good: #23704c;
+  --stage: #dfe2e8;
+  --free: rgba(35, 112, 76, .14);
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131a; --surface: #171c26; --ink: #e8ebf1; --muted: #9aa3b4; --line: #2a3140;
+    --accent: #9db2ec; --accent-ink: #0f131a; --wood: #d39a61; --bad: #f08a78; --good: #6fd1a0;
+    --stage: #1a202b; --free: rgba(111, 209, 160, .16); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131a; --surface: #171c26; --ink: #e8ebf1; --muted: #9aa3b4; --line: #2a3140;
+  --accent: #9db2ec; --accent-ink: #0f131a; --wood: #d39a61; --bad: #f08a78; --good: #6fd1a0;
+  --stage: #1a202b; --free: rgba(111, 209, 160, .16); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.page { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 64px; display: grid; gap: 48px; }
+@media (min-width: 720px) { .page { padding-inline: 32px; } }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.1; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2rem, 4.6vw, 3.25rem); font-weight: 700; max-width: 18ch; }
+h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 700; }
+h3 { font-size: 1.125rem; font-weight: 700; }
+p { margin: 0; }
+.eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lede { color: var(--muted); max-width: 62ch; font-size: 1.0625rem; }
+.num { font-variant-numeric: tabular-nums; font-family: var(--mono); }
+
+/* Header */
+.top { display: grid; gap: 16px; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-top: 8px; }
+.stat { display: grid; gap: 0; }
+.stat b { font-family: var(--display); font-size: 1.75rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: .8125rem; color: var(--muted); }
+.stat .up { color: var(--good); }
+
+/* Visor */
+.viewer { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 980px) { .viewer { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; } }
+.stage { position: relative; height: clamp(440px, 70vh, 760px); border-radius: var(--r); overflow: hidden; background: var(--stage); border: 1px solid var(--line); touch-action: none; }
+.stage canvas { display: block; width: 100%; height: 100%; outline: none; }
+.stage .fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+.bar { position: absolute; left: 12px; right: 12px; top: 12px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; pointer-events: none; }
+.bar > * { pointer-events: auto; }
+.seg { display: inline-flex; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 999px; padding: 4px; gap: 4px; }
+.seg button { font: 500 .8125rem/1 var(--body); border: 0; background: transparent; color: var(--ink); padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: background .18s, color .18s; min-height: 32px; }
+.seg button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg button:focus-visible, .legend button:focus-visible, .pin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hint { position: absolute; left: 12px; bottom: 12px; font: .75rem/1.3 var(--mono); color: var(--muted); background: color-mix(in srgb, var(--surface) 80%, transparent); padding: 6px 10px; border-radius: 8px; pointer-events: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.pin { position: absolute; left: 0; top: 0; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; border: 2px solid var(--surface); background: var(--accent); color: var(--accent-ink); font: 600 .75rem/22px var(--mono); text-align: center; pointer-events: auto; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25); transition: transform .15s; padding: 0; }
+.pin.bad { background: var(--bad); color: #fff; }
+.pin.hot, .pin:hover { transform: scale(1.25); }
+
+/* Leyenda */
+.legend { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 8px; }
+.legend h3 { display: flex; align-items: center; gap: 8px; }
+.legend > p { color: var(--muted); font-size: .875rem; }
+.legend ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.legend button { width: 100%; text-align: left; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: start; background: transparent; border: 0; border-radius: 8px; padding: 8px; color: var(--ink); font: inherit; font-size: .875rem; line-height: 1.4; cursor: pointer; transition: background .15s; }
+.legend button:hover, .legend button.hot { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.legend .n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 600 .75rem var(--mono); }
+.legend .bad .n { background: var(--bad); color: #fff; }
+.legend b { display: block; font-weight: 600; }
+.legend small { color: var(--muted); font-size: .8125rem; }
+
+/* Secciones */
+section.block { display: grid; gap: 24px; }
+.head { display: grid; gap: 8px; }
+.two { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .two { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; display: grid; gap: 16px; min-width: 0; }
+.plan-wrap { overflow-x: auto; }
+.plan-wrap svg { width: 100%; min-width: 320px; height: auto; display: block; }
+.plan-key { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .8125rem; color: var(--muted); }
+.plan-key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+
+.zones { display: grid; gap: 16px; }
+.zone { display: grid; gap: 4px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.zone:last-child { border-bottom: 0; padding-bottom: 0; }
+.zone .wall { font: .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.zone p { color: var(--muted); font-size: .9375rem; }
+
+.cols3 { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .cols3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); } }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.list li { display: grid; gap: 2px; font-size: .9375rem; }
+.list li small { color: var(--muted); font-size: .8125rem; }
+.tag { display: inline-block; font: 500 .6875rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; }
+.tag.out { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.tag.keep { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+.tag.buy { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+
+.shop { width: 100%; border-collapse: collapse; font-size: .875rem; }
+.shop th { text-align: left; font: 500 .6875rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0 8px 8px 0; border-bottom: 1px solid var(--line); }
+.shop td { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.shop td:last-child, .shop th:last-child { text-align: right; padding-right: 0; white-space: nowrap; }
+.shop small { color: var(--muted); display: block; }
+.prio { font: 500 .6875rem var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+.prio.e { color: var(--good); }
+.prio.o { color: var(--muted); }
+.shop tfoot td { font-weight: 600; border-bottom: 0; }
+.table-wrap { overflow-x: auto; }
+
+.steps { counter-reset: s; list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 8px; align-content: start; }
+.steps li::before { content: "Paso " counter(s); font: 500 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.steps p { color: var(--muted); font-size: .9375rem; }
+
+.notes { display: grid; gap: 12px; color: var(--muted); font-size: .9375rem; max-width: 72ch; }
+.notes strong { color: var(--ink); }
+footer { color: var(--muted); font-size: .8125rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <p class="eyebrow">Propuesta de redistribución · cuarto ≈ 340 × 330 cm · techo 244 cm</p>
+    <h1>Tu cuarto, con más piso libre y menos ruido visual</h1>
+    <p class="lede">La cama y la TV ya estaban bien alineadas, así que se quedan. Lo que cambia: la secadora pasa a la pared del reloj bajo un tablero de madera, los zapatos se guardan en cajas cerradas, los cuadros se ordenan y los cables desaparecen. Sin torre de gatos ni zapatera de alambre.</p>
+    <div class="stats" id="stats" aria-live="polite"></div>
+  </header>
+
+  <section class="viewer" aria-label="Maqueta 3D del cuarto">
+    <div class="stage" id="stage">
+      <canvas id="c" tabindex="0" aria-label="Vista 3D interactiva del cuarto. Arrastra para girar."></canvas>
+      <div id="labels"></div>
+      <div class="bar">
+        <div class="seg" role="group" aria-label="Estado del cuarto">
+          <button type="button" id="m-a" data-mode="a" aria-pressed="false">Antes</button>
+          <button type="button" id="m-d" data-mode="d" aria-pressed="true">Después</button>
+        </div>
+        <div class="seg" role="group" aria-label="Cámara">
+          <button type="button" id="v-pano" data-view="pano" aria-pressed="true">Panorámica</button>
+          <button type="button" id="v-plan" data-view="plan" aria-pressed="false">Planta</button>
+          <button type="button" id="v-door" data-view="door" aria-pressed="false">Desde la puerta</button>
+          <button type="button" id="v-bed" data-view="bed" aria-pressed="false">Desde la cama</button>
+        </div>
+      </div>
+      <p class="hint" id="hint">Arrastra para girar · rueda o pellizco para zoom</p>
+    </div>
+    <aside class="legend" id="legend" aria-live="polite"></aside>
+  </section>
+
+  <section class="block">
+    <div class="head">
+      <p class="eyebrow">Plano acotado · vista desde arriba</p>
+      <h2>Dónde va cada cosa</h2>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <div class="seg" role="group" aria-label="Plano: estado" style="justify-self:start">
+          <button type="button" data-plan="a" aria-pressed="false">Antes</button>
+          <button type="button" data-plan="d" aria-pressed="true">Después</button>
+        </div>
+        <div class="plan-wrap"><svg id="plan" viewBox="-44 -40 430 420" role="img" aria-label="Plano del cuarto con medidas"></svg></div>
+        <div class="plan-key">
+          <span><i style="border:1px dashed var(--muted)"></i>Barrido de puertas (dejar libre)</span>
+        </div>
+      </div>
+      <div class="panel zones">
+        <div class="zone"><span class="wall">Pared norte · ventana</span><h3>Estación de trabajo</h3><p>El escritorio queda centrado bajo la ventana, ahora solo. Tira LED cálida bajo la repisa, papelera pequeña debajo del tablero y tapete para la silla. La cortina sube casi al techo y llega al piso para que la ventana se lea más grande.</p></div>
+        <div class="zone"><span class="wall">Pared oeste · armario</span><h3>Consola de servicio</h3><p>Tablero de madera de 105 × 52 cm a 81 cm de alto: la secadora debajo a la izquierda, un KALLAX de 2 cubos con cajas para zapatos a la derecha. Encima, lámpara cálida y bandeja para llaves. Arriba, galería alineada: certificado, reloj y fotos. El armario ya abre completo.</p></div>
+        <div class="zone"><span class="wall">Pared sur · entrada</span><h3>TV y entrada limpia</h3><p>TV centrada con la cama (se ve derecho acostado), cables dentro de una canaleta pintada y LED trasero. La diana sube a 173 cm al centro, el purificador toma el lugar de la zapatera y la katana va montada sobre la puerta. Cero ropa colgada en la entrada.</p></div>
+        <div class="zone"><span class="wall">Pared este · cama</span><h3>Cama modo sofá</h3><p>Tres cojines lumbares contra la pared para que de día funcione como sillón. El cuadro del atardecer se centra sobre la cama y queda solo en esa pared. Cajas bajo la cama para lo que no tenga lugar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head">
+      <p class="eyebrow">Inventario</p>
+      <h2>Qué sale, qué se queda y qué comprar</h2>
+    </div>
+    <div class="cols3">
+      <div class="panel">
+        <h3>Sale del cuarto</h3>
+        <ul class="list">
+          <li><span><span class="tag out">Fuera</span> Torre de gatos</span><small>Libera 0.25 m² y toda la pared del reloj.</small></li>
+          <li><span><span class="tag out">Fuera</span> Zapatera de alambre</span><small>Los zapatos pasan a cajas cerradas y al piso del armario.</small></li>
+          <li><span><span class="tag out">Fuera</span> Reloj adhesivo de números</span><small>Se reemplaza por un reloj redondo de 30 cm.</small></li>
+          <li><span><span class="tag out">Fuera</span> Cajones rojos de la cómoda</span><small>Cambiarlos por grises o negros iguales.</small></li>
+          <li><span><span class="tag keep">Al armario</span> Sudaderas, rodillo, mochila</span><small>Ganchos en la cara interior de la puerta del armario.</small></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Se queda</h3>
+        <ul class="list">
+          <li><span><span class="tag keep">Igual</span> Cama, TV, cómoda, bocinas</span><small>Misma pared, solo ordenadas.</small></li>
+          <li><span><span class="tag keep">Igual</span> Escritorio con repisa y silla</span><small>Centrado bajo la ventana.</small></li>
+          <li><span><span class="tag keep">Se muda</span> Secadora</span><small>A la pared oeste, bajo el tablero nuevo.</small></li>
+          <li><span><span class="tag keep">Se muda</span> Purificador</span><small>Al hueco de la zapatera, junto a la cómoda.</small></li>
+          <li><span><span class="tag keep">Se muda</span> Fotos, certificado, katana</span><small>Galería sobre la consola; katana sobre la puerta.</small></li>
+          <li><span><span class="tag keep">Igual</span> Espejo del armario, diana</span><small>La diana sube a altura reglamentaria.</small></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Lista de compra</h3>
+        <div class="table-wrap">
+          <table class="shop" id="shop">
+            <thead><tr><th>Artículo</th><th>Prioridad</th><th>≈ USD</th></tr></thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head">
+      <p class="eyebrow">Un fin de semana</p>
+      <h2>En qué orden hacerlo</h2>
+    </div>
+    <ol class="steps">
+      <li><h3>Vaciar y medir</h3><p>Saca la torre de gatos y la zapatera. Mide el alto de tu secadora (debe ser ≤ 72 cm) y confirma que hay un enchufe en la pared del reloj.</p></li>
+      <li><h3>Mover la secadora</h3><p>Llévala a la pared oeste, pegada al armario pero fuera del barrido de su puerta. Ponle almohadillas antivibración.</p></li>
+      <li><h3>Armar la consola</h3><p>KALLAX a la derecha, tablero encima y un panel lateral de madera a la izquierda. El tablero no debe tocar la secadora: deja 5 cm arriba.</p></li>
+      <li><h3>Paredes</h3><p>Descuelga todo, tapa los agujeros con masilla. Cuadro del atardecer centrado sobre la cama; galería sobre la consola con los centros a 155 cm.</p></li>
+      <li><h3>Cortinas y cables</h3><p>Barra a 235 cm y 30 cm más ancha por lado. Canaleta de la TV a la cómoda, pintada del color de la pared. LED detrás de la TV y bajo la repisa.</p></li>
+      <li><h3>Styling final</h3><p>Cojines en la cama, cajas iguales en la cómoda, lámpara y bandeja en la consola. Todo lo suelto va al armario o bajo la cama.</p></li>
+    </ol>
+  </section>
+
+  <section class="block">
+    <div class="head">
+      <p class="eyebrow">Antes de comprar</p>
+      <h2>Notas importantes</h2>
+    </div>
+    <div class="notes">
+      <p><strong>Las medidas son estimadas</strong> a partir de las fotos (lente gran angular). Mide el cuarto y ajusta: lo que no cambia es la lógica, cada pared con una sola función.</p>
+      <p><strong>La secadora necesita aire.</strong> Déjale 10 cm libres atrás y a los lados, no cierres el frente con puertas y limpia el filtro después de cada uso. Conéctala directo a la pared, nunca a una regleta o extensión.</p>
+      <p><strong>Plan B</strong> si no hay enchufe en la pared oeste: deja la secadora donde está, quita la papelera y pon el tablero encima, alineado con el escritorio. Se ve igual de integrado, aunque la puerta del armario seguirá sin abrir del todo.</p>
+      <p><strong>Diana:</strong> centro a 173 cm del piso; la línea de tiro queda a 237 cm de la pared, frente al escritorio. Mueve la silla cuando juegues.</p>
+    </div>
+  </section>
+
+  <footer>Maqueta 3D a escala aproximada. Los colores y objetos están simplificados para leer la distribución.</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  "use strict";
+  var W = 3.4, D = 3.3, H = 2.44;
+
+  /* ---------- Datos: huellas en planta (cm) ---------- */
+  var FOOT = {
+    a: [
+      { n: "Cama", r: [202, 338, 4, 196], k: "bed" },
+      { n: "Escritorio", r: [85, 200, 8, 68], k: "furn" },
+      { n: "Secadora", r: [20, 80, 3, 50], k: "appl" },
+      { n: "Papelera", c: [14, 38, 13], k: "misc" },
+      { n: "Silla", c: [150, 135, 33], k: "misc" },
+      { n: "Torre gatos", r: [5, 55, 145, 195], k: "bad" },
+      { n: "Purif.", r: [5, 30, 112, 137], k: "misc" },
+      { n: "Zapatera", r: [145, 205, 300, 328], k: "bad" },
+      { n: "Cómoda", r: [215, 325, 290, 328], k: "furn" }
+    ],
+    d: [
+      { n: "Cama", r: [202, 338, 4, 196], k: "bed" },
+      { n: "Escritorio", r: [85, 200, 8, 68], k: "furn" },
+      { n: "Silla", c: [142, 98, 30], k: "misc" },
+      { n: "Consola", r: [2, 54, 97, 200], k: "wood" },
+      { n: "Purif.", r: [162, 187, 302, 327], k: "misc" },
+      { n: "Cómoda + TV", r: [215, 325, 290, 328], k: "furn" }
+    ]
+  };
+
+  function occGrid(items, step) {
+    var nx = Math.round(340 / step), nz = Math.round(330 / step), g = [], occ = 0;
+    for (var j = 0; j < nz; j++) {
+      var row = [];
+      for (var i = 0; i < nx; i++) {
+        var x = (i + .5) * step, z = (j + .5) * step, hit = 0;
+        for (var k = 0; k < items.length && !hit; k++) {
+          var it = items[k];
+          if (it.r) hit = x >= it.r[0] && x <= it.r[1] && z >= it.r[2] && z <= it.r[3];
+          else hit = (x - it.c[0]) * (x - it.c[0]) + (z - it.c[1]) * (z - it.c[1]) <= it.c[2] * it.c[2];
+        }
+        row.push(hit ? 1 : 0); occ += hit;
+      }
+      g.push(row);
+    }
+    return { g: g, nx: nx, nz: nz, free: (nx * nz - occ) * step * step / 10000 };
+  }
+  var STEP = 2, METRICS = {};
+  ["a", "d"].forEach(function (m) { var o = occGrid(FOOT[m], STEP); METRICS[m] = { free: o.free }; });
+
+  var fmt = function (v) { return v.toFixed(2).replace(".", ","); };
+  document.getElementById("stats").innerHTML =
+    '<div class="stat"><b class="num">' + fmt(METRICS.a.free) + ' → <span class="up">' + fmt(METRICS.d.free) + '</span> m²</b><span>Piso libre total</span></div>' +
+    '<div class="stat"><b class="num">1 → 2</b><span>Puertas que abren completas</span></div>' +
+    '<div class="stat"><b class="num">9 → 6</b><span>Objetos apoyados en el piso</span></div>' +
+    '<div class="stat"><b class="num">0</b><span>Cables, zapatos o ropa a la vista</span></div>' +
+    '<div class="stat"><b class="num" id="stat-budget"></b><span>Compra esencial estimada</span></div>';
+
+  /* ---------- Lista de compra ---------- */
+  var SHOP = [
+    ["Tablero de madera 105 × 52 cm", "Butcher block cortado a medida en Home Depot o Lowe's; sobra para el panel lateral.", "e", 95],
+    ["IKEA KALLAX 1 × 2 (negro-café)", "Soporte derecho del tablero, 42 × 77 cm.", "e", 45],
+    ["2 cajas de tela para KALLAX", "Zapatos de uso diario.", "e", 20],
+    ["Barra de cortina 150–280 cm + 2 cortinas de 244 cm", "Blanco o lino, que toquen el piso.", "e", 60],
+    ["Canaleta para cables pintable", "De la TV a la cómoda.", "e", 15],
+    ["Organizador de zapatos para el piso del armario", "Apilable, 2–3 niveles.", "e", 25],
+    ["Ganchos para puerta (cara interior del armario)", "Sudaderas y chamarras.", "e", 12],
+    ["Almohadillas antivibración", "Para las patas de la secadora.", "e", 12],
+    ["Tira LED USB detrás de la TV", "Luz fría suave, 2 m.", "o", 15],
+    ["Tira LED cálida bajo la repisa", "2700–3000 K.", "o", 15],
+    ["Reloj de pared redondo 30 cm", "Negro o latón.", "o", 25],
+    ["3 cojines lumbares", "Gris o arena, contra la pared.", "o", 45],
+    ["2 cajas bajo la cama", "Con tapa, 15 cm de alto.", "o", 30],
+    ["Lámpara de mesa cálida", "Para la consola.", "o", 30],
+    ["Tapete para silla", "Transparente, protege la alfombra.", "o", 30],
+    ["Cajones de tela iguales para la cómoda", "Reemplazan los rojos.", "o", 25],
+    ["Soporte de pared para katana", "Horizontal, sobre la puerta.", "o", 15]
+  ];
+  var tb = document.querySelector("#shop tbody"), te = 0, to = 0;
+  SHOP.forEach(function (s) {
+    if (s[2] === "e") te += s[3]; else to += s[3];
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + s[0] + "<small>" + s[1] + "</small></td><td><span class='prio " + s[2] + "'>" + (s[2] === "e" ? "Esencial" : "Opcional") + "</span></td><td class='num'>$" + s[3] + "</td>";
+    tb.appendChild(tr);
+  });
+  document.querySelector("#shop tfoot").innerHTML = "<tr><td>Esencial</td><td></td><td class='num'>$" + te + "</td></tr><tr><td>Todo</td><td></td><td class='num'>$" + (te + to) + "</td></tr>";
+  document.getElementById("stat-budget").textContent = "$" + te;
+
+  /* ---------- Plano SVG ---------- */
+  var planMode = "d";
+  function drawPlan() {
+    var svg = document.getElementById("plan"), s = "";
+    var fills = { bed: "color-mix(in srgb, var(--accent) 30%, var(--surface))", furn: "color-mix(in srgb, var(--ink) 22%, var(--surface))", appl: "var(--surface)", wood: "color-mix(in srgb, var(--wood) 40%, var(--surface))", misc: "color-mix(in srgb, var(--muted) 22%, var(--surface))", bad: "color-mix(in srgb, var(--bad) 25%, var(--surface))" };
+    s += '<rect x="0" y="0" width="340" height="330" fill="var(--bg)" />';
+    s += '<text x="120" y="250" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--good)">' + fmt(METRICS[planMode].free) + ' m² de piso libre</text>';
+    // barridos de puertas
+    s += '<path d="M0 15 L80 15 A80 80 0 0 1 0 95 Z" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" />';
+    s += '<path d="M10 330 L10 250 A80 80 0 0 1 90 330" fill="none" stroke="var(--muted)" stroke-dasharray="3 3" />';
+    FOOT[planMode].forEach(function (it) {
+      var f = fills[it.k], cx, cy;
+      if (it.r) {
+        s += '<rect x="' + it.r[0] + '" y="' + it.r[2] + '" width="' + (it.r[1] - it.r[0]) + '" height="' + (it.r[3] - it.r[2]) + '" rx="2" fill="' + f + '" stroke="var(--ink)" stroke-width="1" />';
+        cx = (it.r[0] + it.r[1]) / 2; cy = (it.r[2] + it.r[3]) / 2;
+        var vert = (it.r[3] - it.r[2]) > (it.r[1] - it.r[0]) * 1.6 && (it.r[1] - it.r[0]) < 60;
+        s += '<text x="' + cx + '" y="' + (cy + 3.5) + '" text-anchor="middle" font-size="10" font-family="IBM Plex Sans, sans-serif" fill="var(--ink)"' + (vert ? ' transform="rotate(-90 ' + cx + ' ' + cy + ')"' : '') + '>' + it.n + '</text>';
+      } else {
+        s += '<circle cx="' + it.c[0] + '" cy="' + it.c[1] + '" r="' + it.c[2] + '" fill="' + f + '" stroke="var(--ink)" />';
+        s += '<text x="' + it.c[0] + '" y="' + (it.c[1] + 3.5) + '" text-anchor="middle" font-size="' + (it.c[2] < 20 ? 7 : 10) + '" font-family="IBM Plex Sans, sans-serif" fill="var(--ink)">' + it.n + '</text>';
+      }
+    });
+    // muros
+    s += '<rect x="-6" y="-6" width="352" height="342" fill="none" stroke="var(--ink)" stroke-width="12" />';
+    s += '<line x1="95" y1="-6" x2="185" y2="-6" stroke="#9cc3e6" stroke-width="12" />';
+    s += '<line x1="10" y1="336" x2="90" y2="336" stroke="var(--bg)" stroke-width="12" />';
+    s += '<line x1="-6" y1="15" x2="-6" y2="95" stroke="var(--bg)" stroke-width="12" />';
+    // textos de muros y cotas
+    var t = 'font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)"';
+    s += '<text x="140" y="-18" text-anchor="middle" ' + t + '>VENTANA · norte</text>';
+    s += '<text x="170" y="-30" text-anchor="middle" ' + t + '>340 cm</text>';
+    s += '<text x="-26" y="165" text-anchor="middle" ' + t + ' transform="rotate(-90 -26 165)">330 cm · oeste</text>';
+    s += '<text x="50" y="356" text-anchor="middle" ' + t + '>ENTRADA</text>';
+    s += '<text x="270" y="356" text-anchor="middle" ' + t + '>TV · sur</text>';
+    s += '<text x="-14" y="55" text-anchor="middle" ' + t + ' transform="rotate(-90 -14 55)">ARMARIO</text>';
+    s += '<text x="358" y="165" text-anchor="middle" ' + t + ' transform="rotate(90 358 165)">este · cuadro</text>';
+    svg.innerHTML = s;
+  }
+  drawPlan();
+  document.querySelectorAll("[data-plan]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      planMode = b.dataset.plan;
+      document.querySelectorAll("[data-plan]").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      drawPlan();
+    });
+  });
+
+  /* ---------- Leyenda ---------- */
+  var PINS = {
+    a: [
+      { t: "Torre de gatos", s: "Ocupa el centro de la pared y corta el paso.", p: [0.3, 1.25, 1.7] },
+      { t: "Armario bloqueado", s: "La secadora y la papelera impiden abrir la puerta del todo.", p: [0.45, 0.85, 0.3] },
+      { t: "Zapatos a la vista", s: "Zapatera abierta junto a la TV, lo primero que se ve.", p: [1.75, 0.85, 3.12] },
+      { t: "Cables colgando", s: "De la TV a la cómoda, sobre la pared clara.", p: [2.63, 1.05, 3.26] },
+      { t: "Ropa en la entrada", s: "Tres sudaderas colgadas en la puerta.", p: [0.52, 1.55, 3.18] },
+      { t: "Cuadros dispersos", s: "Tres piezas a distintas alturas en la pared de la cama.", p: [3.36, 1.7, 1.45] },
+      { t: "Reloj de números sueltos", s: "Se lee como manchas en la pared.", p: [0.03, 1.95, 1.55] },
+      { t: "Cortina corta y angosta", s: "Hace ver la ventana y el techo más bajos.", p: [1.4, 2.16, 0.06] },
+      { t: "Cosas sueltas", s: "Ropa en la silla, mochila y laptop en la cama.", p: [1.5, 0.7, 1.35] }
+    ],
+    d: [
+      { t: "Cama modo sofá", s: "Cojines lumbares contra la pared y cajas debajo.", p: [3.2, 0.95, 1.2] },
+      { t: "Cuadro centrado", s: "Solo en la pared, centrado sobre la cama.", p: [3.36, 1.58, 1.0] },
+      { t: "TV limpia", s: "Alineada con la cama, cables ocultos y LED trasero.", p: [2.7, 2.12, 3.22] },
+      { t: "Cómoda uniforme", s: "Cajones iguales, bocinas a los lados.", p: [2.3, 0.55, 2.88] },
+      { t: "Purificador", s: "Toma el lugar de la zapatera.", p: [1.74, 0.95, 3.14] },
+      { t: "Diana a 173 cm", s: "Altura reglamentaria, tiro hacia el escritorio.", p: [1.25, 1.73, 3.22] },
+      { t: "Entrada despejada", s: "Sin ropa en la puerta; katana montada encima.", p: [0.5, 2.25, 3.22] },
+      { t: "Consola de servicio", s: "Secadora + zapatos bajo un tablero de madera.", p: [0.3, 0.86, 1.45] },
+      { t: "Galería alineada", s: "Certificado, reloj y fotos con centros a 155 cm.", p: [0.04, 1.8, 1.53] },
+      { t: "Armario libre", s: "La puerta ya abre 90°: nada en su barrido.", p: [0.4, 0.05, 0.55] },
+      { t: "Escritorio centrado", s: "LED cálido bajo la repisa y tapete para la silla.", p: [1.42, 1.48, 0.3] },
+      { t: "Cortinas altas", s: "Barra a 235 cm y más ancha: ventana más grande.", p: [0.8, 2.3, 0.07] }
+    ]
+  };
+  var mode = "d";
+  var legend = document.getElementById("legend");
+  function renderLegend() {
+    var bad = mode === "a";
+    var h = '<h3>' + (bad ? "Lo que hoy estorba" : "Qué cambia") + '</h3><p>' + (bad ? "Toca un punto para ir a él." : "Toca un punto para ver el cambio de cerca.") + '</p><ol>';
+    PINS[mode].forEach(function (p, i) {
+      h += '<li><button type="button" class="' + (bad ? "bad" : "") + '" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span><b>' + p.t + '</b><small>' + p.s + '</small></span></button></li>';
+    });
+    legend.innerHTML = h + "</ol>";
+  }
+  renderLegend();
+
+  /* ---------- 3D ---------- */
+  var stage = document.getElementById("stage");
+  if (!window.THREE || !THREE.OrbitControls) {
+    var fb = document.createElement("div"); fb.className = "fallback";
+    fb.textContent = "No se pudo cargar el motor 3D. Revisa tu conexión y recarga la página; el plano de abajo muestra la misma distribución.";
+    stage.appendChild(fb);
+    return;
+  }
+
+  var canvas = document.getElementById("c");
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, 1, 0.02, 60);
+  var controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+
+  var room = new THREE.Group();
+  room.position.set(-W / 2, 0, -D / 2);
+  scene.add(room);
+  function R(x, y, z) { return new THREE.Vector3(x - W / 2, y, z - D / 2); }
+
+  // grupos por estado
+  var G = { c: new THREE.Group(), a: new THREE.Group(), d: new THREE.Group() };
+  room.add(G.c, G.a, G.d);
+
+  /* texturas de lienzo */
+  function canvasTex(w, h, draw, rep) {
+    var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    draw(cv.getContext("2d"), w, h);
+    var t = new THREE.CanvasTexture(cv);
+    t.encoding = THREE.sRGBEncoding;
+    t.anisotropy = 4;
+    if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
+    return t;
+  }
+  var texCarpet = canvasTex(256, 256, function (c, w, h) {
+    c.fillStyle = "#8a7862"; c.fillRect(0, 0, w, h);
+    for (var i = 0; i < 9000; i++) { var v = Math.random(); c.fillStyle = v > .5 ? "rgba(255,240,220,.07)" : "rgba(40,30,20,.09)"; c.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5); }
+  }, [6, 6]);
+  var texDuvet = canvasTex(256, 256, function (c, w, h) {
+    c.fillStyle = "#1f2c52"; c.fillRect(0, 0, w, h);
+    c.strokeStyle = "rgba(235,240,255,.85)"; c.lineWidth = 4;
+    c.beginPath(); c.moveTo(0, 128); c.lineTo(w, 128); c.moveTo(128, 0); c.lineTo(128, h); c.stroke();
+  }, [2, 3]);
+  var texBeach = canvasTex(512, 320, function (c, w, h) {
+    var g = c.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, "#5e7a86"); g.addColorStop(.35, "#e8b77a"); g.addColorStop(.5, "#f3cf96"); g.addColorStop(.56, "#b98b62"); g.addColorStop(.8, "#6f7f7a"); g.addColorStop(1, "#8a7358");
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.fillStyle = "rgba(255,236,190,.9)"; c.beginPath(); c.arc(w * .55, h * .48, 16, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "rgba(255,255,255,.35)"; for (var i = 0; i < 6; i++) c.fillRect(0, h * (.62 + i * .05), w, 2);
+  });
+  var texDart = canvasTex(256, 256, function (c, w, h) {
+    var cx = w / 2, cy = h / 2;
+    c.fillStyle = "#1b1b1f"; c.fillRect(0, 0, w, h);
+    function ring(r0, r1, a, b) {
+      for (var i = 0; i < 20; i++) {
+        c.beginPath(); c.moveTo(cx, cy);
+        c.arc(cx, cy, r1, (i - .5) * Math.PI / 10, (i + .5) * Math.PI / 10); c.closePath();
+        c.fillStyle = i % 2 ? a : b; c.fill();
+      }
+      if (r0) { c.beginPath(); c.arc(cx, cy, r0, 0, Math.PI * 2); c.fillStyle = "#000"; c.fill(); }
+    }
+    ring(0, 110, "#c8423a", "#2f7a4a"); ring(0, 102, "#141414", "#efe3c4"); ring(0, 70, "#c8423a", "#2f7a4a"); ring(0, 63, "#141414", "#efe3c4");
+    c.beginPath(); c.arc(cx, cy, 10, 0, Math.PI * 2); c.fillStyle = "#2f7a4a"; c.fill();
+    c.beginPath(); c.arc(cx, cy, 5, 0, Math.PI * 2); c.fillStyle = "#c8423a"; c.fill();
+  });
+  var texTV = canvasTex(512, 288, function (c, w, h) {
+    var g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#2a2a6e"); g.addColorStop(1, "#5a3a8c");
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.fillStyle = "#d9383a"; c.font = "bold 44px sans-serif"; c.textAlign = "center"; c.fillText("GAME START", w / 2, h * .48);
+    c.fillStyle = "#f2f2f2"; c.font = "18px sans-serif"; c.fillText("PULSA CUALQUIER BOTÓN", w / 2, h * .72);
+  });
+  var texCollage = canvasTex(256, 256, function (c, w, h) {
+    c.fillStyle = "#e9e6e1"; c.fillRect(0, 0, w, h);
+    var cols = ["#7c8a96", "#a3927e", "#5d6b61", "#b7a58c", "#6f7784", "#8f7a6b", "#9aa6a0", "#7f6f63", "#a9b0b8"];
+    for (var i = 0; i < 9; i++) { var x = (i % 3) * 84 + 6, y = Math.floor(i / 3) * 84 + 6; c.fillStyle = "#111"; c.fillRect(x, y, 76, 76); c.fillStyle = cols[i]; c.fillRect(x + 8, y + 8, 60, 60); }
+  });
+  var texCert = canvasTex(320, 240, function (c, w, h) {
+    c.fillStyle = "#fbfbfa"; c.fillRect(0, 0, w, h);
+    c.fillStyle = "#6c7480"; c.fillRect(20, 30, 70, 50); c.fillRect(20, 100, 70, 90); c.fillRect(230, 150, 70, 60);
+    c.fillStyle = "#c9c9c4"; c.fillRect(110, 30, 110, 150);
+    c.fillStyle = "#333"; c.font = "italic 18px serif"; c.fillText("Class of", 110, 215);
+  });
+  var texClock = canvasTex(256, 256, function (c, w, h) {
+    c.fillStyle = "#f4f2ee"; c.beginPath(); c.arc(128, 128, 126, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = "#1a1a1a"; c.lineWidth = 6;
+    for (var i = 0; i < 12; i++) { var a = i * Math.PI / 6; c.beginPath(); c.moveTo(128 + Math.cos(a) * 100, 128 + Math.sin(a) * 100); c.lineTo(128 + Math.cos(a) * 116, 128 + Math.sin(a) * 116); c.stroke(); }
+    c.lineWidth = 8; c.beginPath(); c.moveTo(128, 128); c.lineTo(128 + 50, 128 - 30); c.stroke();
+    c.lineWidth = 5; c.beginPath(); c.moveTo(128, 128); c.lineTo(128 - 20, 128 - 85); c.stroke();
+  });
+
+  /* materiales */
+  var M = {};
+  function mat(key, color, opt) {
+    if (M[key]) return M[key];
+    M[key] = new THREE.MeshStandardMaterial(Object.assign({ color: color, roughness: .8, metalness: 0 }, opt || {}));
+    return M[key];
+  }
+  var black = mat("black", 0x1d1e23, { roughness: .6 });
+  var wood = mat("wood", 0xb3814f, { roughness: .55 });
+  var white = mat("white", 0xf1f1ee, { roughness: .5 });
+  var trim = mat("trim", 0xf6f5f1, { roughness: .6 });
+  var grey = mat("grey", 0x9aa0aa);
+  var chairM = mat("chair", 0xc5c9d2, { roughness: .9 });
+
+  function box(p, x0, x1, y0, y1, z0, z1, m, noShadow) {
+    var me = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(x1 - x0), Math.abs(y1 - y0), Math.abs(z1 - z0)), m);
+    me.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+    me.castShadow = !noShadow; me.receiveShadow = true;
+    p.add(me); return me;
+  }
+  function cyl(p, r0, r1, h, x, y, z, m, rot) {
+    var me = new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, 28), m);
+    me.position.set(x, y, z);
+    if (rot) me.rotation.set(rot[0], rot[1], rot[2]);
+    me.castShadow = true; me.receiveShadow = true;
+    p.add(me); return me;
+  }
+  function plane(p, w, h, x, y, z, ry, m) {
+    var me = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m);
+    me.position.set(x, y, z); me.rotation.y = ry || 0;
+    p.add(me); return me;
+  }
+
+  /* ---- Estructura: piso y muros ---- */
+  var floor = box(G.c, 0, W, -0.02, 0, 0, D, new THREE.MeshStandardMaterial({ map: texCarpet, roughness: 1 }));
+  floor.castShadow = false;
+  var T = 0.1, WALLS = {};
+  function wall(key, x0, x1, z0, z1, bx0, bx1, bz0, bz1) {
+    var wm = new THREE.MeshStandardMaterial({ color: 0xd3d4d2, roughness: .95, transparent: true, opacity: 1 });
+    var bm = new THREE.MeshStandardMaterial({ color: 0xf3f2ee, roughness: .6, transparent: true, opacity: 1 });
+    var w = box(G.c, x0, x1, 0, H, z0, z1, wm); w.castShadow = true;
+    box(G.c, bx0, bx1, 0, 0.09, bz0, bz1, bm, true);
+    WALLS[key] = [wm, bm];
+  }
+  function gm(k, color, opt) {
+    var m = new THREE.MeshStandardMaterial(Object.assign({ color: color, roughness: .6, transparent: true, opacity: 1 }, opt || {}));
+    WALLS[k].push(m); return m;
+  }
+  wall("N", -T, W + T, -T, 0, 0, W, 0, 0.012);
+  wall("S", -T, W + T, D, D + T, 0, W, D - 0.012, D);
+  wall("W", -T, 0, 0, D, 0, 0.012, 0, D);
+  wall("E", W, W + T, 0, D, W - 0.012, W, 0, D);
+
+  // ventana (norte)
+  var trN = gm("N", 0xf6f5f1);
+  box(G.c, 0.93, 1.87, 0.93, 2.07, 0.0, 0.03, trN, true);
+  var glassN = new THREE.MeshBasicMaterial({ color: 0xeef4fb, transparent: true }); WALLS.N.push(glassN);
+  plane(G.c, 0.86, 1.06, 1.4, 1.5, 0.032, 0, glassN);
+  box(G.c, 1.38, 1.42, 0.97, 2.03, 0.03, 0.04, trN, true);
+
+  // puerta de entrada (sur) + marco
+  var trS = gm("S", 0xf3f2ee), brS = gm("S", 0xb9a071, { metalness: .6, roughness: .35 });
+  box(G.c, 0.06, 0.94, 0, 2.08, D - 0.02, D, trS, true);
+  box(G.c, 0.1, 0.9, 0, 2.03, D - 0.05, D - 0.02, trS);
+  cyl(G.c, .025, .025, .06, 0.82, 1.0, D - 0.08, brS, [Math.PI / 2, 0, 0]);
+  box(G.c, 1.0, 1.07, 1.18, 1.3, D - 0.015, D - 0.005, trS, true); // apagador
+
+  // puerta del armario (oeste) con espejo
+  var trW = gm("W", 0xf3f2ee);
+  box(G.c, 0, 0.02, 0, 2.08, 0.11, 0.99, trW, true);
+  box(G.c, 0.02, 0.05, 0, 2.03, 0.15, 0.95, trW);
+  box(G.c, 0.05, 0.06, 0.42, 1.88, 0.36, 0.74, gm("W", 0x1d1e23), true);
+  box(G.c, 0.06, 0.065, 0.45, 1.85, 0.39, 0.71, gm("W", 0xc7d3de, { metalness: .5, roughness: .08 }), true);
+  cyl(G.c, .025, .025, .06, 0.08, 1.0, 0.88, gm("W", 0xb9a071, { metalness: .6, roughness: .35 }), [0, 0, Math.PI / 2]);
+
+  /* ---- Comunes: cama, escritorio, cómoda, TV ---- */
+  // cama
+  box(G.c, 2.02, 3.38, 0.1, 0.32, 0.04, 1.96, black);
+  box(G.c, 2.04, 3.36, 0.32, 0.5, 0.06, 1.94, white);
+  box(G.c, 2.0, 3.38, 0.44, 0.57, 0.36, 1.98, new THREE.MeshStandardMaterial({ map: texDuvet, roughness: .95 }));
+  var pil = mat("pillow", 0x273766, { roughness: .95 });
+  box(G.c, 2.1, 2.7, 0.5, 0.64, 0.08, 0.36, pil);
+  box(G.c, 2.72, 3.3, 0.5, 0.64, 0.08, 0.36, pil);
+
+  // escritorio con repisa
+  box(G.c, 0.85, 2.0, 0.73, 0.76, 0.08, 0.68, black);
+  [[0.87, 0.1], [0.87, 0.64], [1.96, 0.1], [1.96, 0.64]].forEach(function (l) { box(G.c, l[0], l[0] + 0.03, 0, 0.73, l[1], l[1] + 0.03, black); });
+  box(G.c, 1.58, 1.95, 0.46, 0.73, 0.12, 0.62, black);
+  box(G.c, 1.59, 1.94, 0.58, 0.6, 0.62, 0.63, grey, true);
+  [0.87, 1.96].forEach(function (x) { box(G.c, x, x + 0.025, 0.76, 1.46, 0.09, 0.115, black); });
+  box(G.c, 0.87, 1.985, 0.95, 0.975, 0.09, 0.33, black);
+  box(G.c, 0.87, 1.985, 1.42, 1.445, 0.09, 0.33, black);
+  box(G.c, 1.18, 1.7, 1.0, 1.36, 0.2, 0.225, mat("screen", 0x0d0f14, { roughness: .3 }));
+  box(G.c, 1.4, 1.48, 0.975, 1.0, 0.2, 0.26, black);
+  box(G.c, 1.15, 1.6, 0.76, 0.78, 0.38, 0.52, mat("kbd", 0x26272c));
+  cyl(G.c, .06, .07, .02, 0.98, 0.985, 0.2, black);
+  cyl(G.c, .01, .01, 0.3, 0.98, 1.14, 0.2, black);
+  cyl(G.c, .05, .09, .12, 1.02, 1.28, 0.26, black, [0.6, 0, 0]);
+
+  // cómoda y bocinas
+  box(G.c, 2.15, 3.25, 0, 0.8, 2.9, 3.28, black);
+  box(G.c, 2.14, 3.26, 0.8, 0.83, 2.89, 3.28, black);
+  var spk = mat("spk", 0x121316, { roughness: .45 });
+  box(G.c, 2.22, 2.44, 0.83, 1.08, 2.98, 3.22, spk);
+  box(G.c, 2.5, 2.6, 0.83, 1.03, 3.05, 3.17, spk);
+  box(G.c, 3.08, 3.18, 0.83, 1.03, 3.05, 3.17, spk);
+  box(G.c, 2.72, 2.9, 0.83, 0.86, 3.0, 3.12, mat("console", 0x2c2d33));
+
+  // TV
+  box(G.c, 2.085, 3.315, 1.315, 2.035, 3.24, 3.285, spk);
+  plane(G.c, 1.2, 0.69, 2.7, 1.675, 3.2395, Math.PI, new THREE.MeshBasicMaterial({ map: texTV, toneMapped: false }));
+
+  // pintura del atardecer
+  function beach(p, zc, yc) {
+    box(p, 3.365, 3.395, yc - 0.34, yc + 0.34, zc - 0.54, zc + 0.54, spk);
+    plane(p, 1.04, 0.64, 3.363, yc, zc, -Math.PI / 2, new THREE.MeshStandardMaterial({ map: texBeach, roughness: .7 }));
+  }
+  function dart(p, x, y) {
+    var dm = [spk, new THREE.MeshStandardMaterial({ map: texDart, roughness: .9 }), spk];
+    var me = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.05, 40), dm);
+    me.rotation.x = -Math.PI / 2; me.position.set(x, y, D - 0.03);
+    me.castShadow = true; p.add(me);
+  }
+  function chair(p, x, z, ry, messy) {
+    var g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; p.add(g);
+    for (var i = 0; i < 5; i++) { var lg = new THREE.Group(); lg.rotation.y = i * Math.PI * 2 / 5; g.add(lg); box(lg, -0.02, 0.02, 0.05, 0.08, 0, 0.3, black); }
+    cyl(g, .03, .03, .36, 0, .26, 0, black);
+    box(g, -0.27, 0.27, 0.44, 0.54, -0.26, 0.26, chairM);
+    box(g, -0.27, 0.27, 0.54, 1.36, 0.22, 0.33, chairM);
+    box(g, -0.06, 0.06, 0.6, 1.34, 0.215, 0.22, white, true);
+    box(g, -0.33, -0.27, 0.62, 0.66, -0.2, 0.12, chairM);
+    box(g, 0.27, 0.33, 0.62, 0.66, -0.2, 0.12, chairM);
+    if (messy) { var cl = cyl(g, 0.16, 0.2, 0.14, 0, 0.6, 0.05, white); cl.scale.set(1, 1, .8); }
+  }
+
+  /* ---- ANTES ---- */
+  (function () {
+    var A = G.a;
+    // secadora junto al escritorio
+    box(A, 0.2, 0.8, 0.02, 0.7, 0.03, 0.5, white);
+    cyl(A, 0.2, 0.2, 0.02, 0.5, 0.36, 0.51, mat("glass", 0x9aa4ad, { roughness: .2, metalness: .2 }), [Math.PI / 2, 0, 0]);
+    var plush = cyl(A, 0.09, 0.11, 0.2, 0.45, 0.8, 0.25, mat("plush", 0x2b2b2b)); plush.castShadow = true;
+    cyl(A, 0.13, 0.11, 0.45, 0.14, 0.225, 0.38, mat("bin", 0x8d9098));
+    // torre de gatos
+    var cat = mat("cat", 0x3a3940, { roughness: 1 }), sisal = mat("sisal", 0xcdb48a, { roughness: 1 });
+    box(A, 0.05, 0.55, 0, 0.03, 1.45, 1.95, cat);
+    cyl(A, .045, .045, 1.25, 0.2, 0.63, 1.6, sisal); cyl(A, .045, .045, 0.8, 0.42, 0.4, 1.82, sisal);
+    box(A, 0.08, 0.36, 1.25, 1.29, 1.46, 1.72, cat); box(A, 0.28, 0.55, 0.78, 0.82, 1.66, 1.95, cat);
+    cyl(A, .16, .12, .14, 0.2, 0.72, 1.75, cat);
+    cyl(A, .03, .03, .05, 0.2, 1.3, 1.65, mat("notebook", 0x222222));
+    // purificador
+    box(A, 0.07, 0.3, 0, 0.88, 1.12, 1.35, spk);
+    // katana apoyada
+    cyl(A, .018, .018, 0.95, 0.12, 0.46, 1.03, mat("katana", 0x8e1f1b, { roughness: .4 }), [0.12, 0, 0.1]);
+    // reloj de números sueltos
+    var gold = mat("gold", 0xc9a45a, { metalness: .7, roughness: .3 });
+    for (var i = 0; i < 12; i++) { var a = i * Math.PI / 6; box(A, 0.001, 0.012, 1.95 + Math.sin(a) * 0.3 - 0.025, 1.95 + Math.sin(a) * 0.3 + 0.025, 1.55 + Math.cos(a) * 0.36 - 0.015, 1.55 + Math.cos(a) * 0.36 + 0.015, gold, true); }
+    box(A, 0.004, 0.012, 1.94, 1.96, 1.44, 1.56, gold, true); box(A, 0.004, 0.012, 1.84, 1.96, 1.54, 1.56, gold, true);
+    // zapatera de alambre con zapatos
+    var wire = mat("wire", 0x2a2a2e, { metalness: .5, roughness: .4 });
+    [[1.45, 3.02], [2.05, 3.02], [1.45, 3.26], [2.05, 3.26]].forEach(function (q) { box(A, q[0] - 0.01, q[0] + 0.01, 0, 0.72, q[1] - 0.01, q[1] + 0.01, wire); });
+    var shoeC = [0xffffff, 0x222222, 0xe4c7c9, 0x2d3f73, 0xd8d2c8, 0x111111, 0x8c8c8c, 0xf2f2f2];
+    [0.05, 0.3, 0.55].forEach(function (y, r) {
+      box(A, 1.45, 2.05, y, y + 0.012, 3.0, 3.28, wire, true);
+      for (var s = 0; s < 3; s++) box(A, 1.49 + s * 0.19, 1.65 + s * 0.19, y + 0.012, y + 0.12, 3.03, 3.26, mat("shoe" + ((r * 3 + s) % 8), shoeC[(r * 3 + s) % 8]));
+    });
+    cyl(A, .055, .055, 0.62, 1.52, 0.9, 3.2, mat("roller", 0xefe7a8), [0.15, 0, 0]);
+    // cables de la TV
+    box(A, 2.6, 2.61, 0.83, 1.32, 3.27, 3.28, spk, true); box(A, 2.66, 2.67, 0.83, 1.32, 3.265, 3.275, spk, true);
+    // cajones rojos
+    var red = mat("red", 0xb73b3b), fab = mat("fab", 0x2a2b30);
+    for (var c = 0; c < 3; c++) for (var r = 0; r < 2; r++) box(A, 2.2 + c * 0.35, 2.52 + c * 0.35, 0.08 + r * 0.36, 0.4 + r * 0.36, 2.885, 2.9, (r === 1 && c === 0) ? red : fab, true);
+    box(A, 2.2, 2.52, 0.44, 0.76, 2.884, 2.89, red, true);
+    // ropa en la puerta
+    [[0.32, 0xd9dadd], [0.48, 0xb9bcc2], [0.64, 0x1b2034]].forEach(function (q) { box(A, q[0] - 0.08, q[0] + 0.08, 0.95, 1.95, D - 0.12, D - 0.05, gm("S", q[1], { roughness: 1 })); });
+    // cuadros
+    beach(A, 1.45, 1.65);
+    box(A, 3.37, 3.395, 1.5, 1.9, 0.24, 0.64, spk);
+    plane(A, 0.4, 0.4, 3.368, 1.7, 0.44, -Math.PI / 2, new THREE.MeshStandardMaterial({ map: texCollage }));
+    box(A, 3.375, 3.395, 1.52, 1.84, 2.3, 2.8, white);
+    plane(A, 0.46, 0.28, 3.373, 1.68, 2.55, -Math.PI / 2, new THREE.MeshStandardMaterial({ map: texCert }));
+    // diana baja
+    dart(A, 1.25, 1.6);
+    // cortina corta
+    var curt = mat("curt", 0xf4f3ef, { roughness: 1, side: THREE.DoubleSide });
+    cyl(A, .012, .012, 1.3, 1.4, 2.12, 0.06, black, [0, 0, Math.PI / 2]);
+    box(A, 0.8, 1.06, 0.75, 2.1, 0.04, 0.09, curt); box(A, 1.74, 2.0, 0.75, 2.1, 0.04, 0.09, curt);
+    // cosas sueltas
+    box(A, 2.8, 3.1, 0.57, 0.72, 0.6, 0.95, mat("bag", 0x4f6b4a, { roughness: 1 }));
+    box(A, 2.85, 3.2, 0.57, 0.59, 1.3, 1.55, mat("laptop", 0xc8ccd2, { metalness: .4, roughness: .4 }));
+    chair(A, 1.5, 1.35, 0, true);
+  })();
+
+  /* ---- DESPUÉS ---- */
+  var glowMats = [];
+  (function () {
+    var Dd = G.d;
+    // consola: tablero de madera + panel lateral + KALLAX + secadora
+    box(Dd, 0.02, 0.54, 0.77, 0.81, 0.97, 2.0, wood);
+    box(Dd, 0.02, 0.54, 0, 0.77, 0.97, 1.0, wood);
+    box(Dd, 0.02, 0.41, 0, 0.77, 1.58, 2.0, black);
+    var bin = mat("binD", 0x8a8378, { roughness: 1 });
+    box(Dd, 0.41, 0.415, 0.04, 0.36, 1.61, 1.97, bin, true);
+    box(Dd, 0.41, 0.415, 0.41, 0.73, 1.61, 1.97, bin, true);
+    box(Dd, 0.04, 0.5, 0.02, 0.7, 1.0, 1.57, white);
+    cyl(Dd, 0.2, 0.2, 0.02, 0.505, 0.36, 1.285, mat("glass", 0x9aa4ad, { roughness: .2, metalness: .2 }), [0, 0, Math.PI / 2]);
+    // lámpara y bandeja
+    cyl(Dd, .06, .07, .04, 0.27, 0.83, 1.82, black);
+    cyl(Dd, .012, .012, .3, 0.27, 0.99, 1.82, black);
+    var shadeM = new THREE.MeshStandardMaterial({ color: 0xf2e6cf, emissive: 0xffc98a, emissiveIntensity: .7, roughness: 1 });
+    glowMats.push(shadeM);
+    cyl(Dd, .09, .13, .17, 0.27, 1.19, 1.82, shadeM);
+    var lamp = new THREE.PointLight(0xffc27a, 0.9, 3.2, 2); lamp.position.set(0.3, 1.2, 1.82); Dd.add(lamp);
+    box(Dd, 0.12, 0.42, 0.81, 0.83, 1.06, 1.26, black);
+    cyl(Dd, .05, .045, .12, 0.27, 0.87, 1.42, mat("pot", 0xe9e4da)); cyl(Dd, .07, .02, .22, 0.27, 1.04, 1.42, mat("leaf", 0x4d6b4c));
+    // galería: certificado, reloj, fotos (centros a 1.55)
+    box(Dd, 0.005, 0.025, 1.41, 1.69, 1.03, 1.37, black);
+    plane(Dd, 0.32, 0.24, 0.027, 1.55, 1.2, Math.PI / 2, new THREE.MeshStandardMaterial({ map: texCert }));
+    var clk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.03, 48), [black, new THREE.MeshStandardMaterial({ map: texClock }), black]);
+    clk.rotation.z = -Math.PI / 2; clk.position.set(0.02, 1.55, 1.53); clk.castShadow = true; Dd.add(clk);
+    box(Dd, 0.005, 0.025, 1.39, 1.71, 1.71, 2.03, black);
+    plane(Dd, 0.3, 0.3, 0.027, 1.55, 1.87, Math.PI / 2, new THREE.MeshStandardMaterial({ map: texCollage }));
+    // katana sobre la puerta
+    cyl(Dd, .018, .018, 0.95, 0.5, 2.2, D - 0.06, mat("katana", 0x8e1f1b), [0, 0, Math.PI / 2]);
+    box(Dd, 0.2, 0.23, 2.16, 2.22, D - 0.03, D - 0.01, black, true); box(Dd, 0.77, 0.8, 2.16, 2.22, D - 0.03, D - 0.01, black, true);
+    // purificador en el hueco de la zapatera
+    box(Dd, 1.62, 1.86, 0, 0.88, 3.02, 3.26, spk);
+    // diana a 1.73 con protector
+    cyl(Dd, 0.36, 0.36, 0.015, 1.25, 1.73, D - 0.008, mat("surround", 0x23252b, { roughness: 1 }), [Math.PI / 2, 0, 0]);
+    dart(Dd, 1.25, 1.73);
+    // cómoda uniforme
+    var fab = mat("fabD", 0x3a3c43, { roughness: 1 });
+    for (var c = 0; c < 3; c++) for (var r = 0; r < 2; r++) box(Dd, 2.2 + c * 0.35, 2.52 + c * 0.35, 0.08 + r * 0.36, 0.4 + r * 0.36, 2.885, 2.9, fab, true);
+    // canaleta + LED trasero TV
+    box(Dd, 2.66, 2.71, 0.83, 1.32, 3.285, 3.3, mat("raceway", 0xd6d7d5), true);
+    var glowTex = canvasTex(256, 160, function (c, w, h) {
+      var g = c.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2);
+      g.addColorStop(0, "rgba(150,175,255,1)"); g.addColorStop(.6, "rgba(120,150,255,.45)"); g.addColorStop(1, "rgba(120,150,255,0)");
+      c.fillStyle = g; c.fillRect(0, 0, w, h);
+    });
+    plane(Dd, 1.75, 1.15, 2.7, 1.675, 3.297, Math.PI, new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: .8 }));
+    var tvL = new THREE.PointLight(0x9fb3ff, 0.5, 2.2, 2); tvL.position.set(2.7, 1.67, 3.05); Dd.add(tvL);
+    // LED bajo la repisa
+    var ledM = new THREE.MeshBasicMaterial({ color: 0xffd9a0 });
+    box(Dd, 0.9, 1.96, 1.405, 1.415, 0.12, 0.3, ledM, true);
+    var deskL = new THREE.PointLight(0xffc98a, 0.45, 1.4, 2); deskL.position.set(1.42, 1.3, 0.3); Dd.add(deskL);
+    // objetos mínimos en la repisa
+    cyl(Dd, .04, .05, .1, 1.8, 1.5, 0.2, mat("pot"));
+    cyl(Dd, .02, .07, .16, 1.8, 1.63, 0.2, mat("leaf"));
+    // papelera bajo el escritorio
+    cyl(Dd, .1, .09, .3, 1.0, 0.15, 0.25, black);
+    // tapete y silla
+    box(Dd, 1.0, 1.9, 0, 0.006, 0.66, 1.5, new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: .25, roughness: .1 }), true);
+    chair(Dd, 1.42, 0.98, 0, false);
+    // cama: cojines lumbares
+    var cush = [mat("c1", 0x9c9486, { roughness: 1 }), mat("c2", 0xc9c0ae, { roughness: 1 }), mat("c3", 0x9c9486, { roughness: 1 })];
+    [0.5, 1.0, 1.5].forEach(function (z, i) { var cu = box(Dd, 3.18, 3.36, 0.57, 0.9, z - 0.23, z + 0.23, cush[i]); cu.rotation.z = 0.12; });
+    box(Dd, 2.06, 2.5, 0.02, 0.1, 0.5, 1.5, mat("ubox", 0xd8d4cc), true);
+    // cuadro centrado sobre la cama
+    beach(Dd, 1.0, 1.58);
+    // cortinas altas a piso
+    var curt = mat("curtD", 0xf4f3ef, { roughness: 1 });
+    cyl(Dd, .014, .014, 1.42, 1.32, 2.36, 0.06, black, [0, 0, Math.PI / 2]);
+    for (var k = 0; k < 4; k++) { box(Dd, 0.63 + k * 0.07, 0.69 + k * 0.07, 0.01, 2.34, 0.02 + (k % 2) * 0.03, 0.06 + (k % 2) * 0.03, curt); }
+    for (var k2 = 0; k2 < 3; k2++) { box(Dd, 1.82 + k2 * 0.06, 1.87 + k2 * 0.06, 0.78, 2.34, 0.02 + (k2 % 2) * 0.03, 0.06 + (k2 % 2) * 0.03, curt); }
+    // zonas de apertura de puertas
+    var swingM = new THREE.MeshBasicMaterial({ color: 0x3aa06f, transparent: true, opacity: .16, depthWrite: false });
+    var s1 = new THREE.Mesh(new THREE.CircleGeometry(0.8, 32, -Math.PI / 2, Math.PI / 2), swingM);
+    s1.rotation.x = -Math.PI / 2; s1.position.set(0, 0.004, 0.15); Dd.add(s1);
+    var s2 = new THREE.Mesh(new THREE.CircleGeometry(0.8, 32, 0, Math.PI / 2), swingM);
+    s2.rotation.x = -Math.PI / 2; s2.position.set(0.1, 0.004, D); Dd.add(s2);
+  })();
+
+  /* ---- Luces ---- */
+  scene.add(new THREE.HemisphereLight(0xf4f6ff, 0x6b5b48, 0.75));
+  var sun = new THREE.DirectionalLight(0xfff2de, 1.1);
+  sun.position.copy(R(1.4, 4.2, -2.4)); sun.target.position.copy(R(1.7, 0, 1.8));
+  sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -3; sun.shadow.camera.right = 3; sun.shadow.camera.top = 3; sun.shadow.camera.bottom = -3; sun.shadow.bias = -0.0005;
+  scene.add(sun, sun.target);
+  var fill = new THREE.DirectionalLight(0xffffff, 0.35); fill.position.copy(R(4, 5, 5)); scene.add(fill);
+
+  /* ---- Modo ---- */
+  function setMode(m) {
+    mode = m;
+    G.a.visible = m === "a"; G.d.visible = m === "d";
+    document.querySelectorAll("[data-mode]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.mode === m ? "true" : "false"); });
+    renderLegend(); buildPins();
+  }
+  document.querySelectorAll("[data-mode]").forEach(function (b) { b.addEventListener("click", function () { setMode(b.dataset.mode); }); });
+
+  /* ---- Pines ---- */
+  var labels = document.getElementById("labels"), pinEls = [];
+  function buildPins() {
+    labels.innerHTML = ""; pinEls = [];
+    PINS[mode].forEach(function (p, i) {
+      var b = document.createElement("button"); b.type = "button";
+      b.className = "pin" + (mode === "a" ? " bad" : ""); b.textContent = i + 1;
+      b.setAttribute("aria-label", (i + 1) + ". " + p.t);
+      b.addEventListener("click", function () { focusPin(i); });
+      b.addEventListener("mouseenter", function () { hot(i, true); });
+      b.addEventListener("mouseleave", function () { hot(i, false); });
+      labels.appendChild(b); pinEls.push({ el: b, v: R(p.p[0], p.p[1], p.p[2]) });
+    });
+  }
+  function hot(i, on) {
+    if (pinEls[i]) pinEls[i].el.classList.toggle("hot", on);
+    var lb = legend.querySelector('[data-i="' + i + '"]'); if (lb) lb.classList.toggle("hot", on);
+  }
+  legend.addEventListener("click", function (e) { var b = e.target.closest("[data-i]"); if (b) focusPin(+b.dataset.i); });
+  legend.addEventListener("mouseover", function (e) { var b = e.target.closest("[data-i]"); if (b) hot(+b.dataset.i, true); });
+  legend.addEventListener("mouseout", function (e) { var b = e.target.closest("[data-i]"); if (b) hot(+b.dataset.i, false); });
+
+  /* ---- Cámaras ---- */
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var VIEWS = {
+    pano: { pos: R(5.4, 4.3, -2.0), tgt: R(1.6, 0.6, 1.75) },
+    plan: { pos: R(1.7, 7.2, 1.66), tgt: R(1.7, 0, 1.65) },
+    door: { pos: R(0.72, 1.68, 3.12), look: R(1.45, 0.9, 0.3), inside: true },
+    bed: { pos: R(2.7, 1.15, 0.5), look: R(2.7, 1.55, 3.3), inside: true }
+  };
+  var tween = null, inside = false;
+  function setInside(v) {
+    inside = v;
+    controls.enableZoom = !v; controls.enablePan = !v;
+    controls.rotateSpeed = v ? -0.35 : 0.8;
+    controls.minDistance = v ? 0.01 : 1.2; controls.maxDistance = v ? 0.2 : 13;
+    controls.maxPolarAngle = v ? Math.PI : 1.52;
+    document.getElementById("hint").textContent = v ? "Arrastra para mirar alrededor" : "Arrastra para girar · rueda o pellizco para zoom";
+  }
+  function flyTo(pos, tgt, isInside, done) {
+    controls.autoRotate = false;
+    setInside(false);
+    controls.minDistance = 0; controls.maxDistance = Infinity;
+    var p0 = camera.position.clone(), t0 = controls.target.clone(), st = performance.now(), dur = reduce ? 0 : 950;
+    tween = function (now) {
+      var k = dur ? Math.min(1, (now - st) / dur) : 1, e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      camera.position.lerpVectors(p0, pos, e); controls.target.lerpVectors(t0, tgt, e);
+      if (k >= 1) { tween = null; setInside(!!isInside); if (done) done(); }
+    };
+  }
+  function goView(name) {
+    var v = VIEWS[name];
+    document.querySelectorAll("[data-view]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.view === name ? "true" : "false"); });
+    if (v.inside) {
+      var dir = v.look.clone().sub(v.pos).normalize();
+      flyTo(v.pos, v.pos.clone().add(dir.multiplyScalar(0.06)), true);
+    } else {
+      flyTo(v.pos, v.tgt, false, function () { if (name === "pano" && !reduce) controls.autoRotate = true; });
+    }
+  }
+  document.querySelectorAll("[data-view]").forEach(function (b) { b.addEventListener("click", function () { goView(b.dataset.view); }); });
+  function focusPin(i) {
+    var p = PINS[mode][i].p, t = R(p[0], p[1], p[2]);
+    var dx = 1.7 - p[0], dz = 1.65 - p[2], len = Math.hypot(dx, dz) || 1;
+    var cp = new THREE.Vector3(p[0] + dx / len * 2.3, Math.max(1.7, p[1] + 0.6), p[2] + dz / len * 2.3);
+    if (Math.hypot(dx, dz) < 0.3) cp.set(p[0] + 1.6, 2.6, p[2] + 1.6);
+    document.querySelectorAll("[data-view]").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+    flyTo(R(cp.x, cp.y, cp.z), t, false);
+    hot(i, true); setTimeout(function () { hot(i, false); }, 1600);
+  }
+  controls.addEventListener("start", function () { controls.autoRotate = false; tween = null; });
+  controls.autoRotateSpeed = 0.6;
+
+  camera.position.copy(VIEWS.pano.pos); controls.target.copy(VIEWS.pano.tgt);
+  setInside(false); controls.autoRotate = !reduce;
+
+  /* ---- Tema ---- */
+  function applyTheme() { scene.background = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--stage").trim() || "#dfe2e8"); }
+  applyTheme();
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* ---- Tamaño ---- */
+  function resize() {
+    var w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    camera.fov = w < 600 ? 58 : 45;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+
+  /* ---- Loop ---- */
+  var v3 = new THREE.Vector3();
+  function wallGhost() {
+    var cx = camera.position.x + W / 2, cz = camera.position.z + D / 2;
+    var front = { N: cz < 0, S: cz > D, W: cx < 0, E: cx > W };
+    Object.keys(WALLS).forEach(function (k) {
+      var o = front[k] ? 0.1 : 1;
+      WALLS[k].forEach(function (m) { m.opacity = o; m.depthWrite = o === 1; });
+    });
+  }
+  function frame(now) {
+    if (tween) tween(now);
+    controls.update();
+    wallGhost();
+    renderer.render(scene, camera);
+    var w = stage.clientWidth, h = stage.clientHeight;
+    for (var i = 0; i < pinEls.length; i++) {
+      v3.copy(pinEls[i].v).project(camera);
+      var el = pinEls[i].el;
+      if (v3.z > 1 || v3.z < -1 || Math.abs(v3.x) > 1.05 || Math.abs(v3.y) > 1.05) { el.hidden = true; continue; }
+      el.hidden = false;
+      el.style.transform = "translate(" + ((v3.x + 1) / 2 * w).toFixed(1) + "px," + ((1 - v3.y) / 2 * h).toFixed(1) + "px)";
+    }
+    requestAnimationFrame(frame);
+  }
+  setMode("d");
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

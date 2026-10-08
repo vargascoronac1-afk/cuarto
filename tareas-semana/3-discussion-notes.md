@@ -30,7 +30,7 @@
 
 ## Post stats
 
-- Word count (excluding references): 263
+- Word count (excluding references): 283 (revised after coordinator review: added chapter-summary sentence, corrected problem-solving sentence to the 7.5 steps, removed one sentence to stay under 290)
 - Em-dashes: 0
 - Assignment chosen: annotated bibliography in a first-semester composition course
 - Major connection: evaluating developer documentation and tutorials (web design/CS)

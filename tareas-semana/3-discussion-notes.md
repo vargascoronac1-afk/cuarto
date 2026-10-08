@@ -30,10 +30,12 @@
 
 ## Post stats
 
-- Word count (excluding references): 283 (revised after coordinator review: added chapter-summary sentence, corrected problem-solving sentence to the 7.5 steps, removed one sentence to stay under 290)
+- Word count (excluding references): 283 (revised after coordinator review: added chapter-summary sentence, corrected problem-solving sentence to the 7.5 steps, removed one sentence to stay under 290; revised again for finance major)
 - Em-dashes: 0
 - Assignment chosen: annotated bibliography in a first-semester composition course
-- Major connection: evaluating developer documentation and tutorials (web design/CS)
+- Major: Business, Finance (first-year student; post makes no claims of professional experience)
+- Major connection: evaluating analyst reports, earnings releases, and financial news for currency and bias; summarizing financial statements accurately; applying the 7.5 problem-solving steps to comparing loan or investment options
+- Outside finance source: none added (not fetched); only the Vanderbilt Bloom's source is outside
 
 ## Rubric reminders for replies (later)
 

@@ -34,8 +34,9 @@
 - Em-dashes: 0
 - Assignment chosen: UNIV 1101 "25-26 Apply and practice what you learned in week 5: Academic planning" (a 3-4 minute video tour of an online course in Canvas: home page, left menu, modules, assignments, rubrics)
 - Tarea de Week 5 confirmada por la estudiante (video tour de un curso en Canvas).
-- Chapter 7 concepts used: metacognition (7.6: planning, tracking, assessing), problem-solving (7.5: multiple possible results, select the best result)
+- Chapter 7 concepts used: analytical thinking (7.3: component parts), critical thinking (7.4: question the situation rather than assume), metacognition (7.6: planning, tracking, assessing)
 - Student's real experience (from student, stated modestly): sets rates and manages payments for the party-entertainment business she runs with her dad, including paying partners and him
+- Vanderbilt/Bloom citation kept: analyzing and evaluating are above simple recall in the revised taxonomy
 - Major: Business, Finance (first-year student; post makes no claims of professional experience)
 - Major connection: evaluating analyst reports, earnings releases, and financial news for currency and bias; summarizing financial statements accurately; applying the 7.5 problem-solving steps to comparing loan or investment options
 - Outside finance source: none added (not fetched); only the Vanderbilt Bloom's source is outside

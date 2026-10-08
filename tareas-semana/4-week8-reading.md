@@ -38,7 +38,7 @@ https://openstax.org/books/college-success/pages/12-2-your-map-to-success-the-ca
 
 **What surprised me**
 
-I expected people to name math or my economics classes right away, because that is how I usually describe myself. Instead, the strength that came up most was how responsible I am with money: how I use it, how I help my family, and how I plan ahead. I was a little surprised that my mom and my friend answered with money at all, but when I thought about it, I have been handling money for my family and our business for years, and I never thought of that as something to say about myself. It makes finance feel like a natural fit, and I want to look at roles where that responsibility is part of the job.
+I expected people to name math or my economics classes right away, because that is how I usually describe myself. Instead, the strength that came up most was how responsible I am with money: how I use it, how I help my family, and how I plan ahead. I was a little surprised that my mom and my friend answered with money at all, but when I thought about it, I have been handling money for my family and our business, and I never thought of that as something to say about myself. It makes finance feel like a natural fit, and I want to look at roles where that responsibility is part of the job.
 
 **How this might help me after college**
 

@@ -1,6 +1,6 @@
 # Week 8 Reading Notes
 
-**ANTES DE ENTREGAR: las conversaciones del log son de ejemplo; reemplázalas por las respuestas reales de las personas a las que preguntes.**
+**ANTES DE ENTREGAR: la entrada de tu papá se basa en tu trabajo real, pero las respuestas de mamá, Dario y la amiga son de ejemplo; reemplázalas por lo que te digan de verdad.**
 
 ## Chapter 12 (OpenStax, College Success)
 

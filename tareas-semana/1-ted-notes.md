@@ -4,7 +4,7 @@
 - URL: https://www.ted.com/talks/brene_brown_the_power_of_vulnerability
 - Duration: 1202 seconds = about 20:02 (from ted.com page metadata og:video:duration). Over 10 min, OK.
 - Transcript source: https://singjupost.com/power-vulnerability-brene-brown-transcript/ (third-party copy; ted.com's transcript text could not be retrieved, only the talk page metadata). Wording may differ slightly from TED's official captions. This copy has no "(Laughter)" or "(Applause)" cues.
-- Essay body word count: about 1106 (body only, excluding title/speaker/URL lines). Needs 1000 words.
+- Essay body word count: about 1168 (body only, excluding title/speaker/URL lines). Needs 1000 words.
 
 ## Quotes used (checked against the transcript text)
 1. "boring and irrelevant" - verbatim
@@ -31,3 +31,4 @@ Also paraphrased from transcript: researcher-storyteller, courage from Latin "co
 - Ending: "That's all I have. Thank you." delivered quickly, followed by applause.
 - Essay says "I especially liked..." and "the room"; adjust personal reactions to what you actually felt.
 - Her university: transcript site says University of Houston (Graduate College of Social Work). Essay says "a social work researcher at the University of Houston".
+- Also verify: she pauses for laughs and then lifts her energy back up (added from the student's performing perspective; the student should confirm this while watching).

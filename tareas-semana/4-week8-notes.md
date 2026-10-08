@@ -76,4 +76,4 @@ Orange and quick-link buttons on the home page: Request a Workshop, Helpful Vide
 
 1. Handshake is listed as the main place for internships and jobs. Do UTPB students usually get the internships they apply for through Handshake, or do most students find them through the career fairs and employer visits?
 2. The Career Services site lists YouScience as a premium assessment that students can book. Is it free for UTPB students, and how long does a session take compared with the free CareerOneStop and O*NET tools?
-3. I am undecided between computer science and graphic or web design. Which advisor should I talk to first, and can they help me compare internship and portfolio requirements for both majors before I pick?
+3. I am a finance major and I am not sure yet whether corporate finance, banking, or financial planning fits me best. Which advisor should I talk to first, and can Career Services help me compare internship requirements for those paths?

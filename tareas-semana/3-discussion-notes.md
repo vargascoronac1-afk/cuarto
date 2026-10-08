@@ -30,9 +30,12 @@
 
 ## Post stats
 
-- Word count (excluding references): 283 (revised after coordinator review: added chapter-summary sentence, corrected problem-solving sentence to the 7.5 steps, removed one sentence to stay under 290; revised again for finance major)
+- Word count (excluding references): 245 (rewritten for the Week 5 academic planning assignment; earlier revisions: chapter-summary sentence added, problem-solving sentence corrected to the 7.5 steps, finance major version at 283)
 - Em-dashes: 0
-- Assignment chosen: annotated bibliography in a first-semester composition course
+- Assignment chosen: UNIV 1101 "25-26 Apply and practice what you learned in week 5: Academic planning" (described only in general terms: planning courses and semesters toward the degree)
+- CONFIRMAR: la descripción de la tarea de Week 5 es general; ajústala si no coincide con lo que hiciste.
+- Chapter 7 concepts used: metacognition (7.6: planning, tracking, assessing), problem-solving (7.5: multiple possible results, select the best result)
+- Student's real experience (from student, stated modestly): sets rates and manages payments for the party-entertainment business she runs with her dad, including paying partners and him
 - Major: Business, Finance (first-year student; post makes no claims of professional experience)
 - Major connection: evaluating analyst reports, earnings releases, and financial news for currency and bias; summarizing financial statements accurately; applying the 7.5 problem-solving steps to comparing loan or investment options
 - Outside finance source: none added (not fetched); only the Vanderbilt Bloom's source is outside

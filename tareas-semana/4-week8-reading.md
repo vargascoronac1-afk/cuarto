@@ -17,32 +17,32 @@ https://openstax.org/books/college-success/pages/12-2-your-map-to-success-the-ca
 
 **Who I asked, and when**
 
-- **Sept. 29, my mom (over the phone).** I asked what she thinks I am good at. She said I am patient when I explain something, and that I finish projects even when I get bored with them. She mentioned that in high school I was the one who kept track of our household bills, and that I caught a utility bill that had been charged twice. She said I did not even make a big deal about it.
-- **Oct. 1, my roommate, Dario.** He said I am the one he asks to check the rent split and the grocery budget, because I show the math instead of just giving him an answer. He said I explain things without making him feel dumb, even when the numbers are confusing.
+- **Sept. 29, my mom.** I asked her what she thinks I am good at. She said I help financially support my grandmother in Cuba, and of course my mom too. She said that is something she values about me.
 - **Oct. 2, my dad, my partner in our clown entertainment business (in person, after an event).** I asked him what he has noticed about how I work. He said I run the money side of the business: I set our rates, I manage the money that comes in from each event, and I split the pay between the other performers we work with (our partners) and him. He said I read the crowd at baby showers, weddings, and birthday parties, and I change the show when a group is not into it. He said I stay calm when an event runs late or a prop breaks, and that I am always on time for setup.
-- **Oct. 4, a friend from my high school economics club.** She said I am good at breaking a money decision into parts, like comparing two loan options or a monthly budget, and that people trust my numbers because I show how I got them. She said I am the person the group turns to when a decision gets stuck.
+- **Oct. 4, a friend from my high school economics club.** She said that for a young woman of our generation, I do not waste money on silly things, and that I think about my future.
 
 **What people have seen me do well (my summary)**
 
-- Breaking a money problem into steps and showing the math
-- Setting prices and managing payments, including splitting pay fairly among a small team
+- Managing money responsibly, including setting rates and splitting pay for our family business
+- Helping support my family, including my grandmother in Cuba
+- Avoiding wasteful spending and thinking ahead about my future
 - Reading a room and adjusting quickly, whether with a family or a crowd of guests
 - Staying calm when things go wrong or run late
-- Explaining financial decisions clearly to other people
 
 **Personal qualities people value in me**
 
-- Patience and persistence
-- Honesty, including when a number is wrong
-- Being punctual and dependable once I take something on, especially with money that belongs to other people
+- Responsibility with money, for myself, my family, and our business
+- Care for my family
+- Planning ahead for my future
+- Being punctual and dependable once I take something on
 
 **What surprised me**
 
-I expected people to name math or my economics classes right away, because that is how I usually describe myself. Instead, several people named things I do at my clown performances: reading the crowd, staying calm when something breaks, and running the money. That made me think finance fits the way I already work, and that my party business is more relevant to my future than I had thought. I already set prices, collect payments, and pay a small team, so I want to look at finance jobs where I work directly with people, not only with spreadsheets.
+I expected people to name math or my economics classes right away, because that is how I usually describe myself. Instead, the strength that came up most was how responsible I am with money: how I use it, how I help my family, and how I plan ahead. I was a little surprised that my mom and my friend answered with money at all, but when I thought about it, I have been handling money for my family and our business for years, and I never thought of that as something to say about myself. It makes finance feel like a natural fit, and I want to look at roles where that responsibility is part of the job.
 
 **How this might help me after college**
 
-Hearing these answers from four different people helped me see a pattern I did not notice before. Next I plan to use this list when I write my resume and when I visit Career Services, so I can describe myself with examples from my real work instead of just saying I am "good with numbers." I also want to ask two more people, a finance professor and a small-business owner I have met through events, to see whether they name the same strengths. Their answers will help me compare client-facing roles like financial planning or banking with small-business finance, where pricing and paying people are part of the job.
+Hearing these answers from three different people helped me see a pattern I did not notice before. Next I plan to use this list when I write my resume and when I visit Career Services, so I can describe myself with examples from my real work instead of just saying I am "good with numbers." I also want to ask two more people, a finance professor and a small-business owner I have met through events, to see whether they name the same strengths. Their answers will help me compare client-facing roles like financial planning or banking with small-business finance, where pricing and paying people are part of the job.
 
 ---
 

@@ -30,10 +30,10 @@
 
 ## Post stats
 
-- Word count (excluding references): 245 (rewritten for the Week 5 academic planning assignment; earlier revisions: chapter-summary sentence added, problem-solving sentence corrected to the 7.5 steps, finance major version at 283)
+- Word count (excluding references): 286 (rewritten for the Week 5 Canvas course-tour assignment; earlier revisions: chapter-summary sentence added, problem-solving sentence corrected to the 7.5 steps, finance major version at 283, academic-planning version at 245)
 - Em-dashes: 0
-- Assignment chosen: UNIV 1101 "25-26 Apply and practice what you learned in week 5: Academic planning" (described only in general terms: planning courses and semesters toward the degree)
-- CONFIRMAR: la descripción de la tarea de Week 5 es general; ajústala si no coincide con lo que hiciste.
+- Assignment chosen: UNIV 1101 "25-26 Apply and practice what you learned in week 5: Academic planning" (a 3-4 minute video tour of an online course in Canvas: home page, left menu, modules, assignments, rubrics)
+- Tarea de Week 5 confirmada por la estudiante (video tour de un curso en Canvas).
 - Chapter 7 concepts used: metacognition (7.6: planning, tracking, assessing), problem-solving (7.5: multiple possible results, select the best result)
 - Student's real experience (from student, stated modestly): sets rates and manages payments for the party-entertainment business she runs with her dad, including paying partners and him
 - Major: Business, Finance (first-year student; post makes no claims of professional experience)

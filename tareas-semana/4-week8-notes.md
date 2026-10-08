@@ -1,6 +1,6 @@
 # Week 8 Reading Notes
 
-**ANTES DE ENTREGAR: la entrada de tu papá se basa en tu trabajo real, pero las respuestas de mamá, Dario y la amiga son de ejemplo; reemplázalas por lo que te digan de verdad.**
+**Log basado en respuestas reales de mamá, papá y amiga (confirmadas por la estudiante).**
 
 ## Chapter 12 (OpenStax, College Success)
 

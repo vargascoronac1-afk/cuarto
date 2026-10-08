@@ -19,12 +19,13 @@ https://openstax.org/books/college-success/pages/12-2-your-map-to-success-the-ca
 
 - **Sept. 29, my mom (over the phone).** I asked what she thinks I am good at. She said I am patient when I explain something, and that I finish projects even when I get bored with them. She mentioned that when I was in high school I spent a whole weekend fixing the layout of the family's church newsletter website, and that I did not even ask for credit for it.
 - **Oct. 1, my roommate, Dario.** He said I am the person people come to when a computer breaks, and that I figured out why his laptop kept freezing by reading the error logs instead of just restarting it. He said he values that I explain things without making him feel dumb.
-- **Oct. 2, my UNIV 1101 instructor, during office hours.** I asked her what she noticed in our class discussions. She said I ask questions that connect the reading to things outside class, and that my Week 6 reflection showed I can organize my thoughts clearly on paper. She suggested I keep that habit.
+- **Oct. 2, my supervisor from my summer job at a local print shop (text message).** I asked her what she has noticed about how I work. She said I double-check print files for bleed and resolution before they go to the press, and that she trusts me with customer files because I tell her when something looks wrong instead of guessing. She said I stay calm when a rush order goes sideways.
 - **Oct. 4, a friend from my high school art club.** She said I have a good eye for layout and color, and that people trust my feedback on their designs because I tell them what is wrong and why.
 
 **What people have seen me do well (my summary)**
 
 - Working through problems step by step instead of guessing
+- Checking my own work before I hand it over
 - Building things that look clean and work, including web pages and small 3D models
 - Explaining technical things in plain language
 

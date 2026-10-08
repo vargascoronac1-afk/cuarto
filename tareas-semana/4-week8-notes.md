@@ -1,5 +1,7 @@
 # Week 8 Reading Notes
 
+**ANTES DE ENTREGAR: las conversaciones del log son de ejemplo; reemplázalas por las respuestas reales de las personas a las que preguntes.**
+
 ## Chapter 12 (OpenStax, College Success)
 
 Chapter page: https://openstax.org/books/college-success/pages/12-introduction

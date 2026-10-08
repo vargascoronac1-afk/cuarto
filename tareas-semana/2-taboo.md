@@ -20,7 +20,7 @@ I would give an informative speech, not a persuasive one. My goal would be to he
 
 For visual aids, I would use a map of Sulawesi, a simple timeline or diagram showing the steps of the ritual, and a photo of the traditional tongkonan houses and stone tombs. I would only show images that the families agreed to share publicly and that come from credited sources. I would avoid close-up photos of bodies, since they would shock the audience and take attention away from the meaning of the ritual. I would also add a comparison slide showing an American funeral custom next to Ma'nene, so the audience sees both as ways of grieving.
 
-For language, I would use calm, neutral, and respectful wording. I would say "remains," "ancestors," and "families," not words like "creepy," "bizarre," or "weird." I would also avoid describing the Toraja as "primitive" or treating them as one single group, because practices differ between villages. I would explain terms like Aluk Todolo and patane simply, cite my sources aloud, and invite questions at the end.
+For language, I would use calm, neutral, and respectful wording. I would say "remains," "ancestors," and "families," not words like "creepy," "bizarre," or "weird." I would also avoid describing the Toraja as "primitive" or treating them as one single group, because practices differ between villages. I would explain terms like Aluk Todolo and patane (the family grave houses) simply, cite my sources aloud, and invite questions at the end.
 
 ## References
 

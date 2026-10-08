@@ -19,7 +19,7 @@ https://openstax.org/books/college-success/pages/12-2-your-map-to-success-the-ca
 
 - **Sept. 29, my mom.** I asked her what she thinks I am good at. She said I help financially support my grandmother in Cuba, and of course my mom too. She said that is something she values about me.
 - **Oct. 2, my dad, my partner in our clown entertainment business (in person, after an event).** I asked him what he has noticed about how I work. He said I run the money side of the business: I set our rates, I manage the money that comes in from each event, and I split the pay between the other performers we work with (our partners) and him. He said I read the crowd at baby showers, weddings, and birthday parties, and I change the show when a group is not into it. He said I stay calm when an event runs late or a prop breaks, and that I am always on time for setup.
-- **Oct. 4, a friend from my high school economics club.** She said that for a young woman of our generation, I do not waste money on silly things, and that I think about my future.
+- **Oct. 4, a friend of mine from Cuba.** She said that for a young woman of our generation, I do not waste money on silly things, and that I think about my future.
 
 **What people have seen me do well (my summary)**
 
@@ -38,7 +38,7 @@ https://openstax.org/books/college-success/pages/12-2-your-map-to-success-the-ca
 
 **What surprised me**
 
-I expected people to name math or my economics classes right away, because that is how I usually describe myself. Instead, the strength that came up most was how responsible I am with money: how I use it, how I help my family, and how I plan ahead. I was a little surprised that my mom and my friend answered with money at all, but when I thought about it, I have been handling money for my family and our business, and I never thought of that as something to say about myself. It makes finance feel like a natural fit, and I want to look at roles where that responsibility is part of the job.
+I expected people to name math or school right away, because that is how I usually describe myself. Instead, the strength that came up most was how responsible I am with money: how I use it, how I help my family, and how I plan ahead. I was a little surprised that my mom and my friend answered with money at all, but when I thought about it, I have been handling money for my family and our business, and I never thought of that as something to say about myself. It makes finance feel like a natural fit, and I want to look at roles where that responsibility is part of the job.
 
 **How this might help me after college**
 

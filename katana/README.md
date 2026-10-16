@@ -45,5 +45,5 @@ cortado en diagonal, como la punta de la hoja. Son 2 piezas en espejo
 1. Pega fieltro negro adhesivo dentro de cada cuna.
 2. La pieza **izquierda** va bajo el mango, a unos 19 cm de la punta del mango (kashira).
    La **derecha** va bajo la saya, a unos 17 cm del extremo dorado (kojiri). Quedan ~69 cm entre ellas.
-3. La derecha va 3 mm más abajo que la izquierda, porque la saya es más delgada que el mango y así la katana queda recta.
+3. La derecha va 3 mm más arriba que la izquierda: la saya es más delgada que el mango y así la katana queda nivelada.
 4. Sobre la puerta: la base de las piezas a unos 212 cm del piso. Tornillo a montante o taquete para tablaroca.

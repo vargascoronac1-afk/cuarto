@@ -68,46 +68,57 @@ const wrapTex = tex(128, 128, (c, w, h) => {
   c.fillStyle = "#b51d24"; c.fillRect(0, 0, w, h);
   c.fillStyle = "#141012"; c.beginPath(); c.moveTo(w / 2, 6); c.lineTo(w - 22, h / 2); c.lineTo(w / 2, h - 6); c.lineTo(22, h / 2); c.closePath(); c.fill();
   c.fillStyle = "#c9a046"; c.fillRect(w / 2 - 7, h / 2 - 7, 14, 14);
-}, [4, 18]);
+}, [18, 4]);
 const wrapM = new THREE.MeshStandardMaterial({ map: wrapTex, roughness: .85 });
 const fittingM = new THREE.MeshStandardMaterial({ color: 0xd8a93a, roughness: .35, metalness: .9 });
-const sayaTex = tex(256, 2048, (c, w, h) => {
+const sayaTex = tex(2048, 256, (c, w, h) => {
   c.fillStyle = "#5e0f12"; c.fillRect(0, 0, w, h);
   c.strokeStyle = "#d9b25a"; c.fillStyle = "#d9b25a"; c.lineWidth = 6;
-  for (let i = 0; i < 5; i++) {
-    const x = w / 2, y = 260 + i * 392;
-    c.save(); c.translate(x, y); c.scale(1, 1.5);
+  for (let i = 0; i < 10; i++) {
+    const x = 260 + (i % 5) * 392, y = i < 5 ? 0 : h;   // v=0 y v=1 miran al frente
+    c.save(); c.translate(x, y); c.scale(1.5, 1);
     c.beginPath(); c.arc(0, 0, 34, 0, Math.PI * 2); c.stroke();
     for (let k = 0; k < 3; k++) { const a = k * 2.094 - Math.PI / 2; c.beginPath(); c.ellipse(Math.cos(a) * 13, Math.sin(a) * 13, 8, 12, a + Math.PI / 2, 0, Math.PI * 2); c.fill(); }
     c.restore();
   }
 });
-sayaTex.wrapS = THREE.RepeatWrapping; sayaTex.offset.x = 0.5;
 const sayaM = new THREE.MeshStandardMaterial({ map: sayaTex, roughness: .28, metalness: .1 });
 
+// Katana con curvatura (sori ~18 mm). Asentada con la panza hacia abajo, que es su posición estable.
+const L = 1080, SORI = 18;
+const f = x => -4 * SORI * (x / L) * (1 - x / L);
+function seg(x0, x1, r, mat) {
+  const pts = []; for (let i = 0; i <= 24; i++) { const x = x0 + (x1 - x0) * i / 24; pts.push(new THREE.Vector3(x, f(x), 0)); }
+  const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 48, r, 48, false), mat);
+  m.castShadow = m.receiveShadow = true; kat.add(m);
+  // tapas
+  [x0, x1].forEach(x => { const c = new THREE.Mesh(new THREE.CircleGeometry(r, 48), mat); const t = Math.atan2(f(x + 1) - f(x - 1), 2); c.position.set(x, f(x), 0); c.rotation.set(0, x === x0 ? -Math.PI / 2 : Math.PI / 2, 0); c.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), t); kat.add(c); });
+  return m;
+}
 function buildKatana(baseX, yAxis, z) {
   kat.position.set(baseX, yAxis, z);
-  cylX(15.5, 30, 0, fittingM);                       // kashira
-  cylX(17, 300, 30, wrapM);                          // tsuka Ø34
-  cylX(19, 14, 330, fittingM);                       // fuchi
+  seg(0, 30, 15.5, fittingM);          // kashira
+  seg(30, 330, 17, wrapM);             // tsuka Ø34
+  seg(330, 344, 19, fittingM);         // fuchi
   const tsuba = new THREE.Mesh(new THREE.CylinderGeometry(37, 37, 8, 64), fittingM);
-  tsuba.rotation.z = Math.PI / 2; tsuba.position.x = 348; tsuba.castShadow = true; kat.add(tsuba);
-  cylX(16, 14, 352, fittingM);                       // seppa/koiguchi
-  cylX(14.6, 200, 366, wrapM);                       // tramo envuelto de la saya
-  [420, 520].forEach(x => cylX(16, 18, x, fittingM)); // ashi
-  const s = cylX(14, 470, 566, sayaM, 64); s.rotation.x = 0.0;
-  cylX(14.4, 44, 1036, fittingM);                    // kojiri
+  tsuba.rotation.z = Math.PI / 2 + Math.atan2(f(349) - f(347), 2); tsuba.position.set(348, f(348), 0); tsuba.castShadow = true; kat.add(tsuba);
+  seg(352, 366, 16, fittingM);
+  seg(366, 566, 14.6, wrapM);          // tramo envuelto de la saya
+  seg(420, 438, 16, fittingM); seg(520, 538, 16, fittingM);   // ashi
+  seg(566, 1036, 14, sayaM);
+  seg(1036, 1080, 14.4, fittingM);     // kojiri
 }
 
 window.ready = Promise.all([load("vista_izq.stl"), load("vista_mon_izq.stl"), load("vista_der.stl"), load("vista_mon_der.stl")]).then(([a, am, b, bm]) => {
   [a, am, b, bm].forEach(g => g.computeVertexNormals());
   // soporte izquierdo bajo la tsuka, derecho bajo la saya
-  window.bL = bracket(a, am, 190); window.bR = bracket(b, bm, 880);
+  window.bL = bracket(a, am, 190); window.bR = bracket(b, bm, 880); bR.position.y = 3;
   // eje de la katana: cuna centrada a y=26 mm de la pared; apoyada en el fondo (z=27)
-  buildKatana(0, 44 + 190 * 3 / 690, 26); kat.rotation.z = -Math.atan(3 / 690);  // la saya es 3 mm más delgada en radio
+  buildKatana(0, 44 - f(190), 26);
   return true;
 });
 
+window.setColor = function (hex) { blackM.color.setHex(hex).convertSRGBToLinear(); };
 window.shot = function (name) {
   const set = {
     general: { pos: [760, 260, 1550], tgt: [540, 20, 0], kat: true },

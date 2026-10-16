@@ -14,9 +14,13 @@ for (const f of ['vista_izq.stl', 'vista_der.stl', 'vista_mon_izq.stl', 'vista_m
   await p.route('http://render.local/**', r => { const n = r.request().url().split('/').pop(); const f = files[n]; if (!f) return r.fulfill({ status: 404 }); r.fulfill({ body: fs.readFileSync(f[0]), contentType: f[1] }); });
   await p.goto('http://render.local/render.html');
   await p.evaluate(() => window.ready);
-  for (const s of ['general', 'cerca', 'pieza', 'frente']) {
-    await p.evaluate(n => window.shot(n), s);
-    await p.locator('canvas').screenshot({ path: path.join(OUT, s + '.png') });
+  const colors = { granate: 0x3d0a0d, marino: 0x18233f, negro: 0x0a0a0c };
+  for (const [n, c] of Object.entries(colors)) {
+    await p.evaluate(c => window.setColor(c), c);
+    for (const s of ['general', 'cerca', 'pieza']) {
+      await p.evaluate(n => window.shot(n), s);
+      await p.locator('canvas').screenshot({ path: path.join(OUT, n + '_' + s + '.png') });
+    }
   }
   console.log(JSON.stringify(errs)); await b.close();
 })();

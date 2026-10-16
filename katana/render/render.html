@@ -1,0 +1,125 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
+<body>
+<script src="three.min.js"></script>
+<script src="STLLoader.js"></script>
+<script>
+// Unidades: mm. Pared en z=0 mirando a +z. x a lo largo de la pared, y hacia arriba.
+const W = 1600, H = 1000;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, W / H, 5, 20000);
+
+function tex(w, h, draw, rep) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8;
+  if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
+  return t;
+}
+// pared con textura de pintura
+const wallTex = tex(512, 512, (c, w, h) => {
+  c.fillStyle = "#cfd0cd"; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 26000; i++) { c.fillStyle = Math.random() > .5 ? "rgba(255,255,255,.05)" : "rgba(0,0,0,.05)"; c.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5); }
+}, [6, 4]);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(4000, 2600), new THREE.MeshStandardMaterial({ map: wallTex, roughness: .95 }));
+wall.position.set(500, 0, 0); wall.receiveShadow = true; scene.add(wall);
+// marco de la puerta debajo (contexto)
+const trimM = new THREE.MeshStandardMaterial({ color: 0xf3f2ee, roughness: .5 });
+const trim = new THREE.Mesh(new THREE.BoxGeometry(1000, 60, 18), trimM); trim.position.set(520, -110, 9); trim.castShadow = trim.receiveShadow = true; scene.add(trim);
+
+// luces
+scene.add(new THREE.HemisphereLight(0xfdfbf6, 0x5a5048, 0.75));
+const key = new THREE.DirectionalLight(0xfff1dc, 1.6);
+key.position.set(-500, 900, 900); key.target.position.set(500, 0, 0);
+key.castShadow = true; key.shadow.mapSize.set(4096, 4096); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6;
+Object.assign(key.shadow.camera, { left: -900, right: 900, top: 600, bottom: -600, near: 10, far: 4000 });
+scene.add(key, key.target);
+const fill = new THREE.DirectionalLight(0xdfe6ff, 0.35); fill.position.set(1500, 300, 1200); scene.add(fill);
+
+// soporte: STL (x, y=fuera de la pared, z=arriba) -> three (-x, z, y) con rotación propia
+const blackM = new THREE.MeshStandardMaterial({ color: 0x0c0c0e, roughness: .5, metalness: .05 });
+const goldM = new THREE.MeshStandardMaterial({ color: 0xd4a536, roughness: .3, metalness: .85 });
+const loader = new THREE.STLLoader();
+function load(url) { return fetch(url).then(r => r.arrayBuffer()).then(b => loader.parse(b)); }
+function bracket(geo, monGeo, xCenter) {
+  const g = new THREE.Group();
+  const inner = new THREE.Group(); g.add(inner);
+  const m1 = new THREE.Mesh(geo, blackM), m2 = new THREE.Mesh(monGeo, goldM);
+  [m1, m2].forEach(m => { m.castShadow = m.receiveShadow = true; inner.add(m); });
+  // (x,y,z) -> (-x, z, y)
+  inner.matrixAutoUpdate = false;
+  inner.matrix.set(-1, 0, 0, 0,  0, 0, 1, 0,  0, 1, 0, 0,  0, 0, 0, 1);
+  g.position.set(xCenter + 20, 0, 0);   // pieza de 40 mm de ancho, centrada en xCenter
+  scene.add(g); return g;
+}
+
+// katana (a juego con la foto): tsuka roja/negra, tsuba y herrajes dorados, saya granate con mon dorados
+const kat = new THREE.Group(); scene.add(kat);
+function cylX(r, len, x0, mat, seg) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, seg || 48, 1), mat);
+  m.rotation.z = Math.PI / 2; m.position.x = x0 + len / 2; m.castShadow = m.receiveShadow = true; kat.add(m); return m;
+}
+const wrapTex = tex(128, 128, (c, w, h) => {
+  c.fillStyle = "#b51d24"; c.fillRect(0, 0, w, h);
+  c.fillStyle = "#141012"; c.beginPath(); c.moveTo(w / 2, 6); c.lineTo(w - 22, h / 2); c.lineTo(w / 2, h - 6); c.lineTo(22, h / 2); c.closePath(); c.fill();
+  c.fillStyle = "#c9a046"; c.fillRect(w / 2 - 7, h / 2 - 7, 14, 14);
+}, [4, 18]);
+const wrapM = new THREE.MeshStandardMaterial({ map: wrapTex, roughness: .85 });
+const fittingM = new THREE.MeshStandardMaterial({ color: 0xd8a93a, roughness: .35, metalness: .9 });
+const sayaTex = tex(256, 2048, (c, w, h) => {
+  c.fillStyle = "#5e0f12"; c.fillRect(0, 0, w, h);
+  c.strokeStyle = "#d9b25a"; c.fillStyle = "#d9b25a"; c.lineWidth = 6;
+  for (let i = 0; i < 5; i++) {
+    const x = w / 2, y = 260 + i * 392;
+    c.save(); c.translate(x, y); c.scale(1, 1.5);
+    c.beginPath(); c.arc(0, 0, 34, 0, Math.PI * 2); c.stroke();
+    for (let k = 0; k < 3; k++) { const a = k * 2.094 - Math.PI / 2; c.beginPath(); c.ellipse(Math.cos(a) * 13, Math.sin(a) * 13, 8, 12, a + Math.PI / 2, 0, Math.PI * 2); c.fill(); }
+    c.restore();
+  }
+});
+sayaTex.wrapS = THREE.RepeatWrapping; sayaTex.offset.x = 0.5;
+const sayaM = new THREE.MeshStandardMaterial({ map: sayaTex, roughness: .28, metalness: .1 });
+
+function buildKatana(baseX, yAxis, z) {
+  kat.position.set(baseX, yAxis, z);
+  cylX(15.5, 30, 0, fittingM);                       // kashira
+  cylX(17, 300, 30, wrapM);                          // tsuka Ø34
+  cylX(19, 14, 330, fittingM);                       // fuchi
+  const tsuba = new THREE.Mesh(new THREE.CylinderGeometry(37, 37, 8, 64), fittingM);
+  tsuba.rotation.z = Math.PI / 2; tsuba.position.x = 348; tsuba.castShadow = true; kat.add(tsuba);
+  cylX(16, 14, 352, fittingM);                       // seppa/koiguchi
+  cylX(14.6, 200, 366, wrapM);                       // tramo envuelto de la saya
+  [420, 520].forEach(x => cylX(16, 18, x, fittingM)); // ashi
+  const s = cylX(14, 470, 566, sayaM, 64); s.rotation.x = 0.0;
+  cylX(14.4, 44, 1036, fittingM);                    // kojiri
+}
+
+window.ready = Promise.all([load("vista_izq.stl"), load("vista_mon_izq.stl"), load("vista_der.stl"), load("vista_mon_der.stl")]).then(([a, am, b, bm]) => {
+  [a, am, b, bm].forEach(g => g.computeVertexNormals());
+  // soporte izquierdo bajo la tsuka, derecho bajo la saya
+  window.bL = bracket(a, am, 190); window.bR = bracket(b, bm, 880);
+  // eje de la katana: cuna centrada a y=26 mm de la pared; apoyada en el fondo (z=27)
+  buildKatana(0, 44 + 190 * 3 / 690, 26); kat.rotation.z = -Math.atan(3 / 690);  // la saya es 3 mm más delgada en radio
+  return true;
+});
+
+window.shot = function (name) {
+  const set = {
+    general: { pos: [760, 260, 1550], tgt: [540, 20, 0], kat: true },
+    cerca: { pos: [70, 190, 330], tgt: [195, 55, 25], kat: true },
+    pieza: { pos: [980, 170, 260], tgt: [880, 55, 25], kat: false },
+    frente: { pos: [880, 60, 330], tgt: [880, 55, 20], kat: false }
+  }[name];
+  kat.visible = set.kat;
+  camera.position.set(...set.pos); camera.lookAt(...set.tgt);
+  camera.fov = name === "general" ? 32 : 35; camera.updateProjectionMatrix();
+  renderer.render(scene, camera);
+  return true;
+};
+</script>
+</body></html>

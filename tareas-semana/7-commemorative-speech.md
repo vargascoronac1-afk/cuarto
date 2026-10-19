@@ -1,52 +1,67 @@
-# Commemorative Speech: My Father, My First Teacher
+# Commemorative Speech: My Father
 
-*Length: about 300 words, or 2.5 minutes with pauses at a calm pace. Change anything in [brackets] or that doesn't match your real life.*
+## Clean version (to practice and memorize)
 
-Good [morning/afternoon], everyone. Most people go to work in an office. My dad goes to work with a painted smile and a bag full of surprises. Today I want to honor the most important person in my life: my father, [his name]. He is a clown, a businessman, and my first teacher.
+Good [morning/afternoon], everyone.
 
-For years, my dad and I have worked side by side, entertaining guests at baby showers, weddings, and birthday parties. People see the jokes and the colors. What they don't see is what happens before the show: arriving early, setting everything up, and making sure we are ready before the first guest walks in. My dad taught me that being on time is a way of showing respect.
+When I was a little girl, I used to ask my dad about his childhood. And every time he answered, I felt something heavy in my chest. Today, I want to honor that man: my father, [his name].
 
-He also taught me how to read a room. Some crowds laugh at everything. Others just stare at you. When a show isn't working, my dad doesn't panic. He changes the joke, changes the music, changes the energy, until the room is laughing again. And when a prop breaks in the middle of a performance, he stays calm and turns the mistake into part of the act. I learned more about handling pressure by watching him than from any book.
+My dad is a humble man. He doesn't talk about himself much, and he never asks for credit. But behind his quiet smile, there is a story that most people will never know.
 
-But the biggest gift my dad gave me was his trust. He let me take charge of the money side of our business. I set our rates, I keep track of what we earn, and I pay our partners, and him too. That trust is the reason I am studying finance today.
+My father lost his dad when he was very young. And his mother was not there for him. So while other children were playing, going to school, and being taken care of, my dad was working. He started working when he was just a child. Not because he wanted to, but because he had to.
 
-[Optional, one real memory: One night, after a long event, he told me "______."]
+Think about that for a second. A boy with no father to guide him and no mother to hold him, learning how to survive on his own.
 
-So, to my dad: thank you for every early morning, every broken prop, and every lesson hidden behind a painted smile. You taught me that making people happy is serious work. You are my hero, and the best partner I could ever ask for. Thank you.
+When I was little and he told me these stories, I didn't fully understand them. I just knew they made me sad. I remember wishing I could go back in time and give that little boy a hug.
+
+But here is what amazes me. Life gave my father every reason to be bitter. Instead, he chose to be kind. Nobody ever showed him how to be a parent, and yet he became the father I always needed. He showed up. He worked hard. And he made sure we never had to feel what he felt.
+
+Everything I am today, I learned from watching him. He taught me that hard work is not something to complain about. It is a way of taking care of the people you love. He taught me to respect every dollar, because he knows how hard each one is to earn. And he taught me that where you start does not decide where you finish.
+
+So, Dad, thank you. Thank you for breaking the cycle. Thank you for giving me the childhood you never had. You may be a humble man, but to me, you are the strongest person I know.
+
+Thank you.
+
+---
+
+## Marked version (with pauses and expressions)
+
+**Legend:** **/** = short pause (1 sec) | **//** = long pause (2 sec) | **WORD** = stress this word | *(cue)* = expression or gesture
+
+*(Smile, look into the camera)* Good [morning/afternoon], everyone. **/**
+
+*(Calm, a little nostalgic)* When I was a **little** girl, I used to ask my dad about his childhood. **/** And every time he answered, **/** I felt something **heavy** in my chest. *(Hand on your chest)* **//**
+
+Today, I want to honor that man: **/** my father, [his name]. **//**
+
+*(Warm tone)* My dad is a **humble** man. He doesn't talk about himself much, **/** and he **never** asks for credit. **/** But behind his quiet smile, **/** there is a story that most people will **never** know. **//**
+
+*(Slow down, softer voice)* My father lost his dad when he was **very** young. **//** And his mother **/** was not there for him. **//**
+
+So while other children were **playing**, **/** going to **school**, **/** and being **taken care of**, *(count with your fingers: 1, 2, 3)* **/** my dad was **working**. **/** He started working when he was just a **child**. **/** Not because he **wanted** to, **/** but because he **had** to. **//**
+
+*(Look straight into the camera, serious)* Think about that for a second. **//** A boy with **no** father to guide him **/** and **no** mother to hold him, **/** learning how to survive **on his own**. **//**
+
+*(Softer, emotional)* When I was little and he told me these stories, **/** I didn't fully understand them. **/** I just knew they made me **sad**. **/** I remember wishing I could go back in time **/** and give that little boy **a hug**. **//**
+
+*(Lift your energy, stronger voice)* But here is what **amazes** me. **//** Life gave my father **every** reason to be bitter. **/** Instead, **/** he chose to be **kind**. **/** Nobody ever showed him how to be a parent, **/** and **yet** he became the father I always **needed**. **/** He showed **up**. **/** He worked **hard**. **/** And he made sure we **never** had to feel what he felt. **//**
+
+*(Proud tone, open hand toward the camera)* Everything I am today, **/** I learned from watching **him**. **/** He taught me that hard work is **not** something to complain about. **/** It is a way of **taking care** of the people you love. **/** He taught me to respect **every** dollar, **/** because he knows how **hard** each one is to earn. **/** And he taught me **/** that where you **start** **/** does not decide where you **finish**. **//**
+
+*(Slow, soft, as if talking to him)* So, Dad, **/** thank you. **/** Thank you for **breaking** the cycle. **/** Thank you for giving me the childhood **you** never had. **//** You may be a humble man, **/** but to me, **/** you are the **strongest** person I know. **//**
+
+*(Smile, hold eye contact 2 seconds)* Thank you.
 
 ---
 
-# Delivery Guide (in Spanish, for you)
+# Guía rápida (en español)
 
-## Marcas para practicar
-| Momento | Qué hacer |
-|---|---|
-| "Good morning, everyone." | Sonríe y mira directo a la cámara. Haz una pausa de 1 segundo antes de seguir. |
-| "...with a painted smile and a bag full of surprises." | Di esta frase con tono juguetón. Es el gancho del inicio. |
-| "my father, [his name]." | **Pausa de 2 segundos.** Baja un poco la voz: es el momento emotivo. |
-| "a clown, a businessman, and my first teacher." | Cuenta con los dedos: 1, 2, 3. |
-| "Some crowds laugh at everything. Others just stare at you." | Tono divertido. Puedes poner cara seria en "stare". |
-| "changes the joke, changes the music, changes the energy" | Sube un poco la energía en cada repetición y mueve la mano hacia adelante. |
-| "the biggest gift my dad gave me was his trust." | **Pausa antes de "his trust".** Habla más lento. |
-| "and him too." | Sonríe. Es un momento ligero. |
-| "So, to my dad:" | Pausa y mira a la cámara como si le hablaras a él. |
-| "You are my hero..." | Voz más suave y lenta. Termina con una sonrisa y quédate quieta 2 segundos antes de cortar. |
-
-## Reglas de la tarea que bajan puntos
-1. **No leas.** Te piden estilo manuscrito, pero dicen en mayúsculas que no leas palabra por palabra ni sostengas el papel. Practica **5 veces en voz alta**. Si necesitas apoyo, pega una hoja con **palabras clave** justo debajo de la cámara, no el texto completo.
-2. **Sin edición y sin avatares.** Graba de una sola vez. Si te equivocas, empieza de nuevo.
-3. **Duración entre 2 y 3 minutos.** Cronométrate al practicar. Si te pasa de 3, quita el párrafo opcional.
-4. **YouTube: "Unlisted" (No listado), NUNCA "Private".** Un video privado vale cero. También puedes subirlo directo con el botón de Canvas.
-
-## Cómo grabar
-- Celular **horizontal**, a la **altura de tus ojos**, a un brazo y medio de distancia, de modo que se te vea de la cintura para arriba (para que se vean los gestos).
-- Luz de frente (una ventana delante de ti, no detrás).
-- Mira al **lente**, no a la pantalla.
-
----
+- **Duración:** unas 350 palabras, que con las pausas dan entre 2:40 y 3:00. **Cronométrate.** Si pasas de 3:00, quita primero "Think about that for a second." y después "He showed up. He worked hard."
+- **No lo leas palabra por palabra.** La tarea lo exige en mayúsculas. Practica la versión limpia 5 veces en voz alta, y la última vez usa solo la versión marcada para las pausas.
+- **Si necesitas apoyo**, pega debajo de la cámara solo estas palabras clave: *heavy chest → humble → lost his dad / mother → working as a child → no father, no mother → little boy hug → chose to be kind → every dollar → start/finish → Dad, thank you*.
+- **Si te emocionas, está bien.** Respira, haz la pausa y sigue. En un discurso conmemorativo eso suma.
+- **Grabación:** de una sola vez y sin editar. Celular horizontal, a la altura de los ojos. Mira el lente. En YouTube ponlo en **Unlisted**, nunca en Private.
 
 # Peer Review Template (3 classmates)
 
-Copy this and fill it in for each classmate:
-
-> Hi [name], [one specific thing they did well, e.g., "your eye contact with the camera made it feel like you were talking directly to me" / "your pause before talking about your grandmother was powerful"]. One thing you could work on is [one specific, kind suggestion, e.g., "slowing down a little in the middle so each example has time to land" / "using your hands more, since they stayed at your sides most of the time" / "looking up from your notes more often"]. Overall, your tribute to [person/place] really showed [what you felt].
+> Hi [name], [one specific thing they did well, e.g., "your pause before talking about your grandmother was powerful" / "you kept great eye contact with the camera"]. One thing you could work on is [one specific, kind suggestion, e.g., "slowing down a little so each example has time to land" / "using your hands more" / "looking up from your notes more often"]. Overall, your tribute to [person/place] really showed [what you felt].
